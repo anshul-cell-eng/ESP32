@@ -24,6 +24,7 @@ class DeviceCollector:
     def __init__(self):
         self.is_running: bool = False
         self._task: Optional[asyncio.Task] = None
+        self._serial_task: Optional[asyncio.Task] = None
         
         # State tracking
         self.is_online: bool = False
@@ -94,16 +95,22 @@ class DeviceCollector:
             return
         self.is_running = True
         self._task = asyncio.create_task(self._poll_loop())
-        logger.info("DeviceCollector service started.")
+        self._serial_task = asyncio.create_task(self._serial_listener_loop())
+        logger.info("DeviceCollector service started with dual HTTP/Serial listeners.")
 
     async def stop(self):
         self.is_running = False
         if self._task:
             self._task.cancel()
-            try:
+        if self._serial_task:
+            self._serial_task.cancel()
+        try:
+            if self._task:
                 await self._task
-            except asyncio.CancelledError:
-                pass
+            if self._serial_task:
+                await self._serial_task
+        except asyncio.CancelledError:
+            pass
         logger.info("DeviceCollector service stopped.")
 
     async def ingest_telemetry(self, payload: DeviceStatusPayload, client_ip: str) -> None:
@@ -448,5 +455,129 @@ class DeviceCollector:
         elif scenario == "CUSTOM" and custom_adc is not None:
             self._demo_adc = max(0, min(4095, custom_adc))
             self._demo_trend = 0
+
+    async def _serial_listener_loop(self):
+        """Background listener for physically connected USB ESP32 boards."""
+        if os.getenv("RENDER"):
+            return
+
+        import re
+        while self.is_running:
+            ser = None
+            try:
+                import serial.tools.list_ports
+                import serial
+                # Scan for CH340, CP210x, or target COM10
+                com_ports = serial.tools.list_ports.comports()
+                target_port = None
+                for p in com_ports:
+                    if "CH340" in p.description or "CP210" in p.description or "USB-SERIAL" in p.description or p.device == "COM10":
+                        target_port = p.device
+                        break
+
+                if target_port:
+                    try:
+                        ser = serial.Serial(target_port, 115200, timeout=1.5)
+                        logger.info(f"Connected to ESP32 Hardware via Serial on {target_port} at 115200 baud.")
+                        
+                        while self.is_running and ser.is_open:
+                            raw_line = await asyncio.to_thread(ser.readline)
+                            if not raw_line:
+                                continue
+                            line = raw_line.decode("utf-8", errors="replace").strip()
+                            if not line:
+                                continue
+
+                            # 1. Parse raw MQ-2 reading from simple firmware
+                            m = re.search(r"MQ-2 raw reading:\s*(\d+)", line)
+                            if m:
+                                adc_val = int(m.group(1))
+                                if adc_val >= self.critical_threshold:
+                                    g_status = GasStatus.CRITICAL
+                                    r_state = True
+                                    b_state = True
+                                elif adc_val >= self.safe_threshold:
+                                    g_status = GasStatus.WARNING
+                                    r_state = False
+                                    b_state = True
+                                else:
+                                    g_status = GasStatus.SAFE
+                                    r_state = False
+                                    b_state = False
+
+                                payload = DeviceStatusPayload(
+                                    deviceId=self.device_id or "HC001",
+                                    gasAdc=adc_val,
+                                    gasStatus=g_status,
+                                    relayState=r_state,
+                                    buzzerState=b_state,
+                                    mode=OperatingMode.LIVE,
+                                    firmwareVersion="ESP32-HARDWARE-SERIAL"
+                                )
+                                await self.ingest_telemetry(payload, client_ip=f"Serial-{target_port}")
+
+                            # 2. Parse JSON telemetry packet
+                            elif line.startswith("{") and line.endswith("}"):
+                                try:
+                                    import json
+                                    d = json.loads(line)
+                                    if "gasAdc" in d:
+                                        payload = DeviceStatusPayload(**d)
+                                        await self.ingest_telemetry(payload, client_ip=f"Serial-JSON-{target_port}")
+                                except Exception:
+                                    pass
+
+                    except (serial.SerialException, PermissionError) as e:
+                        logger.debug(f"Serial port {target_port} unavailable: {e}")
+                    finally:
+                        if ser and ser.is_open:
+                            ser.close()
+            except ImportError:
+                break
+            except Exception as e:
+                logger.debug(f"Serial listener exception: {e}")
+
+            await asyncio.sleep(2.0)
+
+    async def auto_discover_esp32(self) -> Optional[str]:
+        """Safely attempt to locate ESP32 on common local subnets or via USB Serial."""
+        if os.getenv("RENDER"):
+            logger.info("Subnet scan requested on Render: private network scanning is disabled in cloud environments.")
+            return None
+
+        # 1. Check if an active ESP32 is connected via USB Serial
+        try:
+            import serial.tools.list_ports
+            for p in serial.tools.list_ports.comports():
+                if "CH340" in p.description or "CP210" in p.description or p.device == "COM10":
+                    return f"USB-Serial ({p.device})"
+        except Exception:
+            pass
+
+        # 2. Check candidate local IPs on current subnet (Hotspot 192.168.137.x or LAN)
+        candidate_subnets = ["192.168.137", "192.168.20", "192.168.1"]
+        async with httpx.AsyncClient(timeout=0.6) as client:
+            for subnet in candidate_subnets:
+                tasks = []
+                for host_id in range(2, 25):
+                    candidate_url = f"http://{subnet}.{host_id}/api/health"
+                    tasks.append(self._probe_candidate_ip(client, candidate_url, f"{subnet}.{host_id}"))
+                results = await asyncio.gather(*tasks, return_exceptions=True)
+                for res in results:
+                    if isinstance(res, str):
+                        self.esp32_ip = res
+                        return res
+        return None
+
+    async def _probe_candidate_ip(self, client: httpx.AsyncClient, url: str, ip: str) -> Optional[str]:
+        try:
+            resp = await client.get(url)
+            if resp.status_code == 200:
+                data = resp.json()
+                if "status" in data or "deviceId" in data:
+                    return ip
+        except Exception:
+            pass
+        return None
 
 device_collector = DeviceCollector()

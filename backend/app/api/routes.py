@@ -1,3 +1,4 @@
+import os
 import httpx
 import time
 from datetime import datetime, timezone
@@ -194,6 +195,36 @@ async def ping_device(req: PingRequest):
     """Safely test connection to ESP32 without altering actuators."""
     ip = req.targetIp or device_collector.esp32_ip
     ip_clean = ip.strip()
+
+    # 1. Cloud environment guard: Render cannot ping private RFC1918 IPs
+    if os.getenv("RENDER"):
+        if any(ip_clean.startswith(prefix) for prefix in ["192.168.", "10.", "172.16.", "172.17.", "172.18.", "172.19.", "172.20.", "172.21.", "172.22.", "172.23.", "172.24.", "172.25.", "172.26.", "172.27.", "172.28.", "172.29.", "172.30.", "172.31.", "127."]):
+            return PingResponse(
+                success=False,
+                targetIp=ip_clean,
+                latencyMs=None,
+                statusCode=400,
+                message="Cloud deployment (Render) cannot connect to private home LAN IPs (192.168.x.x). Flash ESP32 to push telemetry to https://your-app.onrender.com/api/ingest instead."
+            )
+
+    # 2. Host loopback guard: Catch attempts to ping the laptop itself on port 80
+    if ip_clean in ["127.0.0.1", "localhost", "192.168.20.242", "192.168.137.1"]:
+        if device_collector.is_online and device_collector.last_valid_payload:
+            return PingResponse(
+                success=True,
+                targetIp=ip_clean,
+                latencyMs=device_collector.last_latency_ms or 15.0,
+                statusCode=200,
+                message=f"Target {ip_clean} is the host laptop. ESP32 HC001 is actively streaming live sensor telemetry ({device_collector.last_valid_payload.gasAdc} ADC)."
+            )
+        return PingResponse(
+            success=False,
+            targetIp=ip_clean,
+            latencyMs=None,
+            statusCode=400,
+            message=f"Target {ip_clean} is the host laptop running FastAPI on port 8000, not the ESP32 (port 80). For Wi-Fi, verify the ESP32's assigned IP. For USB, connect the board via COM port."
+        )
+
     if not ip_clean.startswith("http://") and not ip_clean.startswith("https://"):
         target_url = f"http://{ip_clean}/api/health"
     else:
@@ -201,7 +232,7 @@ async def ping_device(req: PingRequest):
 
     start_t = time.time()
     try:
-        async with httpx.AsyncClient(timeout=3.0) as client:
+        async with httpx.AsyncClient(timeout=2.5) as client:
             resp = await client.get(target_url)
             latency = round((time.time() - start_t) * 1000.0, 2)
             return PingResponse(
@@ -217,7 +248,15 @@ async def ping_device(req: PingRequest):
             targetIp=ip_clean,
             latencyMs=None,
             statusCode=408,
-            message="Connection timed out after 3.0s"
+            message=f"Connection timed out after 2.5s to {ip_clean}: No HTTP response received."
+        )
+    except httpx.ConnectError:
+        return PingResponse(
+            success=False,
+            targetIp=ip_clean,
+            latencyMs=None,
+            statusCode=503,
+            message=f"Connection refused at {ip_clean}: No HTTP service listening on port 80. Ensure ESP32 is powered on and connected to Wi-Fi."
         )
     except Exception as e:
         return PingResponse(
@@ -225,7 +264,7 @@ async def ping_device(req: PingRequest):
             targetIp=ip_clean,
             latencyMs=None,
             statusCode=500,
-            message=f"Connection error: {str(e)}"
+            message=f"Ping notice: {str(e)}"
         )
 
 @router.post("/demo/scenario")
@@ -261,15 +300,29 @@ async def get_diagnostics():
 @router.post("/diagnostics/discover")
 async def discover_esp32_device():
     """Scans local subnets to auto-discover an active ESP32 device."""
-    found_ip = await device_collector.auto_discover_esp32()
-    if found_ip:
+    if os.getenv("RENDER"):
         return {
-            "success": True,
-            "foundIp": found_ip,
-            "message": f"Successfully auto-discovered ESP32 at {found_ip}"
+            "success": False,
+            "foundIp": None,
+            "message": "Subnet scanning is disabled in cloud deployments (Render). ESP32 must push to /api/ingest."
         }
-    return {
-        "success": False,
-        "foundIp": None,
-        "message": "No active ESP32 found on local network subnets"
-    }
+    try:
+        found_ip = await device_collector.auto_discover_esp32()
+        if found_ip:
+            return {
+                "success": True,
+                "foundIp": found_ip,
+                "message": f"Successfully located active ESP32 at {found_ip}"
+            }
+        return {
+            "success": False,
+            "foundIp": None,
+            "message": "No active ESP32 HTTP endpoint found on local subnets. Verify Wi-Fi or USB connection."
+        }
+    except Exception as e:
+        logger.error(f"Error during auto-discovery: {e}", exc_info=True)
+        return {
+            "success": False,
+            "foundIp": None,
+            "message": f"Discovery completed with notice: {str(e)}"
+        }
