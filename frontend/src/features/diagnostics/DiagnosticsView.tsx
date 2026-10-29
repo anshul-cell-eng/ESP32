@@ -8,10 +8,15 @@ import {
   RefreshCw, 
   Play, 
   CheckCircle, 
-  AlertTriangle 
+  AlertTriangle,
+  Cloud,
+  Code2,
+  Clock,
+  ShieldCheck,
+  Radio
 } from 'lucide-react';
 import { useSentinel } from '../../context/SentinelContext';
-import { fetchDiagnostics, pingDevice, discoverDevice } from '../../services/api';
+import { fetchDiagnostics, pingDevice, discoverDevice, fetchHealth } from '../../services/api';
 import { DiagnosticsData } from '../../types/sentinel';
 
 export const DiagnosticsView: React.FC = () => {
@@ -22,6 +27,15 @@ export const DiagnosticsView: React.FC = () => {
   const [pinging, setPinging] = useState<boolean>(false);
   const [discovering, setDiscovering] = useState<boolean>(false);
   const [discoverResult, setDiscoverResult] = useState<{ success: boolean; foundIp?: string; message: string } | null>(null);
+  const [showSpec, setShowSpec] = useState<boolean>(false);
+  const [cloudVerifyResult, setCloudVerifyResult] = useState<{
+    success: boolean;
+    backendStatus: string;
+    databaseStatus: string;
+    message: string;
+    timestamp: string;
+  } | null>(null);
+  const [verifyingCloud, setVerifyingCloud] = useState<boolean>(false);
 
   const loadDiagnostics = async () => {
     setLoading(true);
@@ -38,6 +52,13 @@ export const DiagnosticsView: React.FC = () => {
   useEffect(() => {
     loadDiagnostics();
   }, []);
+
+  const isCloud = Boolean(
+    diag?.deviceConnection?.isCloud ||
+    diag?.databaseStatus?.includes('PostgreSQL') ||
+    (import.meta.env.VITE_API_BASE_URL && import.meta.env.VITE_API_BASE_URL.includes('onrender.com')) ||
+    (typeof window !== 'undefined' && window.location.hostname.includes('onrender.com'))
+  );
 
   const handleRunPing = async () => {
     setPinging(true);
@@ -73,7 +94,50 @@ export const DiagnosticsView: React.FC = () => {
     }
   };
 
+  const handleRunCloudVerify = async () => {
+    setVerifyingCloud(true);
+    try {
+      const health = await fetchHealth();
+      const updatedDiag = await fetchDiagnostics();
+      setDiag(updatedDiag);
+
+      setCloudVerifyResult({
+        success: health.status === 'HEALTHY',
+        backendStatus: health.status,
+        databaseStatus: `${health.database} (${health.databaseEngine})`,
+        message: health.deviceOnline
+          ? 'ESP32 is online and actively streaming live telemetry to Render.'
+          : 'Backend & Database are online and ready on Render. Awaiting physical ESP32 telemetry push.',
+        timestamp: new Date().toLocaleTimeString(),
+      });
+    } catch (err: unknown) {
+      setCloudVerifyResult({
+        success: false,
+        backendStatus: 'UNREACHABLE',
+        databaseStatus: 'UNKNOWN',
+        message: err instanceof Error ? err.message : 'Failed to reach cloud backend',
+        timestamp: new Date().toLocaleTimeString(),
+      });
+    } finally {
+      setVerifyingCloud(false);
+    }
+  };
+
   const isOnline = status.isOnline;
+  const lastTime = diag?.deviceConnection.lastSuccessfulTime;
+
+  const getFreshnessLabel = () => {
+    if (!lastTime) return 'No Telemetry Yet';
+    try {
+      const diffSec = Math.max(0, Math.round((Date.now() - new Date(lastTime).getTime()) / 1000));
+      if (diffSec < 6) return 'FRESH (< 6s)';
+      if (diffSec < 60) return `STALE (${diffSec}s ago)`;
+      const diffMin = Math.round(diffSec / 60);
+      return `OFFLINE (${diffMin}m ago)`;
+    } catch {
+      return 'Unknown';
+    }
+  };
 
   return (
     <div className="space-y-4 max-w-7xl mx-auto">
@@ -85,7 +149,9 @@ export const DiagnosticsView: React.FC = () => {
             <h2 className="text-base font-bold text-white">System Diagnostics &amp; Health</h2>
           </div>
           <p className="text-xs text-sentinel-textSecondary">
-            Transport connectivity health, packet failure counters, and non-intrusive device ping
+            {isCloud 
+              ? 'Cloud telemetry ingestion status, persistent PostgreSQL storage, and device freshness'
+              : 'Transport connectivity health, packet failure counters, and non-intrusive device ping'}
           </p>
         </div>
 
@@ -125,20 +191,22 @@ export const DiagnosticsView: React.FC = () => {
           <div className="space-y-2 text-xs font-mono">
             <div className="flex justify-between">
               <span className="text-sentinel-muted">Device ID:</span>
-              <span className="text-white font-medium">{status.deviceData?.deviceId || 'HC001'}</span>
+              <span className="text-white font-medium">{status.deviceData?.deviceId || diag?.deviceConnection.deviceId || 'HC001'}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-sentinel-muted">Firmware Version:</span>
-              <span className="text-white">{status.deviceData?.firmwareVersion || '1.0.0'}</span>
+              <span className="text-white">{status.deviceData?.firmwareVersion || '1.3.0'}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-sentinel-muted">Configured Target:</span>
-              <span className="text-sentinel-blue">{diag?.deviceConnection.ip || '192.168.1.100'}</span>
+              <span className="text-sentinel-muted">{isCloud ? 'Ingest Route:' : 'Configured Target:'}</span>
+              <span className="text-sentinel-blue truncate max-w-[150px]" title={isCloud ? '/api/ingest' : (diag?.deviceConnection.ip || '192.168.1.100')}>
+                {isCloud ? 'POST /api/ingest' : (diag?.deviceConnection.ip || '192.168.1.100')}
+              </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-sentinel-muted">Consecutive Drops:</span>
-              <span className={status.consecutiveFailures > 0 ? 'text-sentinel-warning font-bold' : 'text-sentinel-safe'}>
-                {status.consecutiveFailures} drops
+              <span className="text-sentinel-muted">Telemetry Status:</span>
+              <span className={isOnline ? 'text-sentinel-safe font-bold' : 'text-sentinel-warning'}>
+                {getFreshnessLabel()}
               </span>
             </div>
             <div className="flex justify-between">
@@ -163,7 +231,7 @@ export const DiagnosticsView: React.FC = () => {
           <div className="space-y-2 text-xs font-mono">
             <div className="flex justify-between">
               <span className="text-sentinel-muted">Server Port:</span>
-              <span className="text-white">8000 (HTTP/SSE)</span>
+              <span className="text-white">{isCloud ? '443 (HTTPS/WSS)' : '8000 (HTTP/SSE)'}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-sentinel-muted">Collector Mode:</span>
@@ -174,7 +242,7 @@ export const DiagnosticsView: React.FC = () => {
               <span className="text-white">{diag?.systemUptimeSeconds ? `${Math.round(diag.systemUptimeSeconds)}s` : 'Active'}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-sentinel-muted">Polling Cadence:</span>
+              <span className="text-sentinel-muted">Push Cadence:</span>
               <span className="text-white">1.0s interval</span>
             </div>
             <div className="flex justify-between">
@@ -199,7 +267,9 @@ export const DiagnosticsView: React.FC = () => {
           <div className="space-y-2 text-xs font-mono">
             <div className="flex justify-between">
               <span className="text-sentinel-muted">Storage Engine:</span>
-              <span className="text-white">SQLite (WAL Mode)</span>
+              <span className="text-white font-medium">
+                {diag?.databaseStatus?.includes('PostgreSQL') ? 'PostgreSQL (Render)' : 'SQLite (WAL Mode)'}
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-sentinel-muted">Connected Clients:</span>
@@ -221,37 +291,125 @@ export const DiagnosticsView: React.FC = () => {
         </div>
       </div>
 
-      {/* Non-Intrusive Ping Test */}
+      {/* Cloud Ingestion or Local Ping Verification Section */}
       <div className="p-4 rounded-xl bg-sentinel-panel border border-sentinel-border shadow-card">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
           <div>
-            <h3 className="text-xs font-semibold text-white">Non-Intrusive Ping Verification</h3>
+            <div className="flex items-center gap-2">
+              {isCloud ? (
+                <Cloud className="w-4 h-4 text-sentinel-blue" />
+              ) : (
+                <Radio className="w-4 h-4 text-sentinel-blue" />
+              )}
+              <h3 className="text-xs font-semibold text-white">
+                {isCloud ? 'Cloud Ingestion & Telemetry Verification' : 'Non-Intrusive Ping Verification'}
+              </h3>
+            </div>
             <p className="text-xs text-sentinel-textSecondary mt-0.5">
-              Tests direct HTTP round-trip connectivity to the ESP32 health route without altering output states
+              {isCloud
+                ? 'Monitors authenticated HTTPS telemetry push from ESP32 to Render cloud endpoint'
+                : 'Tests direct HTTP round-trip connectivity to the ESP32 health route without altering output states'}
             </p>
           </div>
 
           <div className="flex items-center gap-2">
-            <button
-              onClick={handleRunDiscover}
-              disabled={discovering}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sentinel-surface hover:bg-sentinel-panel border border-sentinel-border text-white text-xs font-medium transition-colors cursor-pointer disabled:opacity-50"
-            >
-              <RefreshCw className={`w-3.5 h-3.5 text-sentinel-blue ${discovering ? 'animate-spin' : ''}`} />
-              <span>{discovering ? 'Scanning Subnets...' : 'Auto-Scan for ESP32'}</span>
-            </button>
-            <button
-              onClick={handleRunPing}
-              disabled={pinging}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sentinel-blue hover:bg-sentinel-blueHover text-white text-xs font-medium transition-colors cursor-pointer disabled:opacity-50"
-            >
-              <Play className={`w-3.5 h-3.5 ${pinging ? 'animate-spin' : ''}`} />
-              <span>{pinging ? 'Pinging...' : 'Execute Ping'}</span>
-            </button>
+            {isCloud ? (
+              <>
+                <button
+                  onClick={() => setShowSpec(!showSpec)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sentinel-surface hover:bg-sentinel-panel border border-sentinel-border text-white text-xs font-medium transition-colors cursor-pointer"
+                >
+                  <Code2 className="w-3.5 h-3.5 text-sentinel-blue" />
+                  <span>{showSpec ? 'Hide Spec' : 'Ingestion Spec'}</span>
+                </button>
+                <button
+                  onClick={handleRunCloudVerify}
+                  disabled={verifyingCloud}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sentinel-blue hover:bg-sentinel-blueHover text-white text-xs font-medium transition-colors cursor-pointer disabled:opacity-50"
+                >
+                  <ShieldCheck className={`w-3.5 h-3.5 ${verifyingCloud ? 'animate-spin' : ''}`} />
+                  <span>{verifyingCloud ? 'Verifying Path...' : 'Verify Ingest Path'}</span>
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={handleRunDiscover}
+                  disabled={discovering}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sentinel-surface hover:bg-sentinel-panel border border-sentinel-border text-white text-xs font-medium transition-colors cursor-pointer disabled:opacity-50"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 text-sentinel-blue ${discovering ? 'animate-spin' : ''}`} />
+                  <span>{discovering ? 'Scanning Subnets...' : 'Auto-Scan for ESP32'}</span>
+                </button>
+                <button
+                  onClick={handleRunPing}
+                  disabled={pinging}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sentinel-blue hover:bg-sentinel-blueHover text-white text-xs font-medium transition-colors cursor-pointer disabled:opacity-50"
+                >
+                  <Play className={`w-3.5 h-3.5 ${pinging ? 'animate-spin' : ''}`} />
+                  <span>{pinging ? 'Pinging...' : 'Execute Ping'}</span>
+                </button>
+              </>
+            )}
           </div>
         </div>
 
-        {discoverResult && (
+        {/* Cloud Architecture Notice (Always displayed in cloud mode) */}
+        {isCloud && (
+          <div className="p-3 rounded-lg border border-sentinel-border bg-sentinel-surface/70 text-xs font-mono mb-3 text-sentinel-textSecondary">
+            <div className="flex items-center gap-2 text-white font-semibold mb-1">
+              <Cloud className="w-3.5 h-3.5 text-sentinel-blue" />
+              <span>Cloud Ingestion Architecture</span>
+            </div>
+            <p className="leading-relaxed">
+              In Render cloud deployments, the physical ESP32 connects to local Wi-Fi and pushes encrypted sensor readings via HTTPS POST to <code className="text-sentinel-blue">/api/ingest</code> using the configured <code className="text-white">X-Device-Token</code>. Outbound LAN subnet scans and <code className="text-sentinel-muted">192.168.x.x</code> pings are intentionally disabled in the cloud because cloud containers cannot access private local networks.
+            </p>
+          </div>
+        )}
+
+        {/* Ingestion Specification Drawer */}
+        {isCloud && showSpec && (
+          <div className="p-3 rounded-lg border border-sentinel-border bg-[#102223] text-xs font-mono mb-3 space-y-1.5">
+            <div className="text-white font-bold pb-1 border-b border-sentinel-border/50">HTTPS Ingestion Contract</div>
+            <div><span className="text-sentinel-muted">Method:</span> <strong className="text-sentinel-safe">POST</strong></div>
+            <div><span className="text-sentinel-muted">URL:</span> <span className="text-sentinel-blue">https://sentinel-backend-kf6w.onrender.com/api/ingest</span></div>
+            <div><span className="text-sentinel-muted">Header:</span> <span className="text-white">X-Device-Token: &lt;SENTINEL_DEVICE_TOKEN&gt;</span></div>
+            <div><span className="text-sentinel-muted">Payload:</span> <code className="text-[11px] text-sentinel-safe">{`{"deviceId":"HC001","gasAdc":1200,"gasStatus":"SAFE","relayState":false,"buzzerState":false}`}</code></div>
+            <div><span className="text-sentinel-muted">TLS Security:</span> <span className="text-white">Let's Encrypt ISRG Root X1 CA validation strictly enforced</span></div>
+          </div>
+        )}
+
+        {/* Cloud Verification Result */}
+        {isCloud && cloudVerifyResult && (
+          <div
+            className={`p-3 rounded-lg border text-xs font-mono mb-3 flex items-start gap-2.5 ${
+              cloudVerifyResult.success
+                ? 'bg-sentinel-safe/15 border-sentinel-safe/40 text-sentinel-safe'
+                : 'bg-sentinel-warning/15 border-sentinel-warning/40 text-sentinel-warning'
+            }`}
+          >
+            {cloudVerifyResult.success ? (
+              <CheckCircle className="w-4 h-4 shrink-0 mt-0.5" />
+            ) : (
+              <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
+            )}
+            <div>
+              <div className="font-bold flex items-center gap-2">
+                <span>{cloudVerifyResult.success ? 'Backend Ingestion Path Verified' : 'Ingestion Path Notice'}</span>
+                <span className="text-[10px] text-sentinel-muted">({cloudVerifyResult.timestamp})</span>
+              </div>
+              <div className="text-[11px] text-sentinel-textSecondary mt-0.5">{cloudVerifyResult.message}</div>
+              <div className="text-[10px] text-sentinel-muted mt-1 flex gap-3">
+                <span>Backend: <strong className="text-white">{cloudVerifyResult.backendStatus}</strong></span>
+                <span>Database: <strong className="text-white">{cloudVerifyResult.databaseStatus}</strong></span>
+                <span>Hardware: <strong className={isOnline ? 'text-sentinel-safe' : 'text-sentinel-warning'}>{isOnline ? 'ONLINE' : 'AWAITING PUSH'}</strong></span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Local Discovery Result */}
+        {!isCloud && discoverResult && (
           <div
             className={`p-3 rounded-lg border text-xs font-mono mb-3 flex items-start gap-2.5 ${
               discoverResult.success
@@ -271,7 +429,8 @@ export const DiagnosticsView: React.FC = () => {
           </div>
         )}
 
-        {pingResult && (
+        {/* Local Ping Result */}
+        {!isCloud && pingResult && (
           <div
             className={`p-3 rounded-lg border text-xs font-mono flex items-start gap-2.5 ${
               pingResult.success

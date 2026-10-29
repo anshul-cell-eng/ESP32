@@ -472,6 +472,7 @@ void networkTask(void* pvParameters) {
 
   unsigned long lastPushTime = 0;
   unsigned long lastWifiCheck = 0;
+  wl_status_t prevWifiStatus = WiFi.status();
 
   // Dedicated Core 0 Loop
   for (;;) {
@@ -479,10 +480,23 @@ void networkTask(void* pvParameters) {
 
     unsigned long now = millis();
 
-    // 1. Background Wi-Fi Watchdog & Reconnection
+    // 1. Background Wi-Fi Watchdog & Status Transition Logging
+    wl_status_t currWifiStatus = WiFi.status();
+    if (currWifiStatus != prevWifiStatus) {
+      if (currWifiStatus == WL_CONNECTED) {
+        Serial.println(F("[NET] >>> Wi-Fi Connected Successfully! <<<"));
+        Serial.print(F("[NET] >>> Local IP: http://"));
+        Serial.println(WiFi.localIP());
+      } else if (prevWifiStatus == WL_CONNECTED) {
+        Serial.println(F("[NET] Wi-Fi connection dropped. Local safety loop running unaffected."));
+      }
+      prevWifiStatus = currWifiStatus;
+    }
+
     if (now - lastWifiCheck >= 5000) {
       lastWifiCheck = now;
       if (WiFi.status() != WL_CONNECTED) {
+        Serial.println(F("[NET] Attempting Wi-Fi auto-reconnect in background..."));
         WiFi.reconnect();
       }
     }
@@ -544,11 +558,25 @@ void networkTask(void* pvParameters) {
         int httpCode = http.POST(json);
         if (httpCode == 200 || httpCode == 201) {
           // Telemetry accepted
+          static unsigned long lastAckLog = 0;
+          if (now - lastAckLog >= 5000) {
+            lastAckLog = now;
+            Serial.print(F("[NET] Telemetry ACK from Cloud (HTTP "));
+            Serial.print(httpCode);
+            Serial.print(F(" | ADC: "));
+            Serial.print(snapAdc);
+            Serial.print(F(" | Status: "));
+            Serial.print(snapStatus);
+            Serial.println(F(")"));
+          }
         } else if (httpCode == 401) {
-          Serial.println(F("[NET WARN] Ingest Rejected: Invalid X-Device-Token!"));
+          Serial.println(F("[NET ERROR] Ingest Rejected (401 Unauthorized): Device token mismatch! Check Render environment."));
         } else if (httpCode > 0) {
-          Serial.print(F("[NET WARN] Ingest HTTP Code: "));
+          Serial.print(F("[NET WARN] Ingest HTTP Response Code: "));
           Serial.println(httpCode);
+        } else {
+          Serial.print(F("[NET ERROR] Ingest Transport Failed: "));
+          Serial.println(http.errorToString(httpCode).c_str());
         }
 
         http.end();

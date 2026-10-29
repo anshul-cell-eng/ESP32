@@ -87,6 +87,24 @@ export async function fetchDiagnostics(): Promise<DiagnosticsData> {
   return res.json();
 }
 
+export interface BackendHealth {
+  status: string;
+  service: string;
+  version: string;
+  database: string;
+  databaseEngine: string;
+  collectorRunning: boolean;
+  deviceOnline: boolean;
+  uptimeSeconds: number;
+  timestamp: string;
+}
+
+export async function fetchHealth(): Promise<BackendHealth> {
+  const res = await fetchWithTimeout(`${BASE_URL}/api/health`);
+  if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+  return res.json();
+}
+
 export async function discoverDevice(): Promise<{ success: boolean; foundIp?: string; message: string }> {
   const res = await fetchWithTimeout(`${BASE_URL}/api/diagnostics/discover`, {
     method: 'POST',

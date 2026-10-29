@@ -77,6 +77,8 @@ export interface DiagnosticsData {
     lastLatencyMs: number | null;
     lastSuccessfulTime: string | null;
     staleTimeoutSeconds: number;
+    isCloud?: boolean;
+    ingestEndpoint?: string;
   };
   activeStreamClients: number;
   systemUptimeSeconds: number;

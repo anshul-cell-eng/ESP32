@@ -197,9 +197,13 @@ class DeviceCollector:
                 await asyncio.sleep(sleep_time)
 
     async def _poll_esp32_device(self, client: httpx.AsyncClient) -> bool:
+        # Cloud guard: Render cloud cannot connect to private home LAN IPs (192.168.x.x).
+        # In cloud mode, the ESP32 pushes telemetry inwards via authenticated HTTPS POST /api/ingest.
+        if os.getenv("RENDER"):
+            return False
+
         ip = self.esp32_ip.strip()
-        # Skip polling non-routable placeholder or default IP in cloud environment without errors
-        if not ip or ip in ["192.168.1.100", "0.0.0.0", "127.0.0.1"] and os.getenv("RENDER"):
+        if not ip or ip in ["192.168.1.100", "0.0.0.0", "127.0.0.1"]:
             return False
 
         if not ip.startswith("http://") and not ip.startswith("https://"):

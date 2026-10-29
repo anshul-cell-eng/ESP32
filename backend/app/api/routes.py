@@ -279,6 +279,7 @@ async def get_diagnostics():
     db_ok = check_db_health()
     db_engine = "PostgreSQL" if is_postgres() else "SQLite"
     db_status = f"ONLINE ({db_engine})" if db_ok else "ERROR"
+    is_cloud = bool(os.getenv("RENDER") or is_postgres())
 
     return DiagnosticsResponse(
         backendStatus="RUNNING",
@@ -290,7 +291,9 @@ async def get_diagnostics():
             "consecutiveFailures": device_collector.consecutive_failures,
             "lastLatencyMs": device_collector.last_latency_ms,
             "lastSuccessfulTime": device_collector.last_response_timestamp_str,
-            "staleTimeoutSeconds": device_collector.stale_timeout
+            "staleTimeoutSeconds": device_collector.stale_timeout,
+            "isCloud": is_cloud,
+            "ingestEndpoint": "/api/ingest"
         },
         activeStreamClients=sse_manager.client_count,
         systemUptimeSeconds=round(time.time() - start_time, 2),
