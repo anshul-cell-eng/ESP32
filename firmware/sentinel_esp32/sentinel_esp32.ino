@@ -504,13 +504,14 @@ void networkTask(void* pvParameters) {
         String url = String(SENTINEL_INGEST_URL);
         bool isHttps = url.startsWith("https://");
 
+        WiFiClientSecure secureClient;
+        WiFiClient plainClient;
+
         if (isHttps) {
-          WiFiClientSecure secureClient;
-          // Validates Let's Encrypt ISRG Root X1 certificate strictly
+          // Validates Let's Encrypt ISRG Root X1 certificate strictly (Never disabled)
           secureClient.setCACert(ISRG_ROOT_X1_CA);
           http.begin(secureClient, url);
         } else {
-          WiFiClient plainClient;
           http.begin(plainClient, url);
         }
 
