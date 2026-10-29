@@ -4,7 +4,7 @@ services:
   # ==============================================================================
   - type: web
     name: sentinel-backend
-    env: python
+    runtime: python
     plan: free
     region: oregon
     buildCommand: pip install -r backend/requirements.txt
@@ -25,15 +25,14 @@ services:
         fromService:
           type: web
           name: sentinel-frontend
-          property: url
+          envVarKey: RENDER_EXTERNAL_URL
 
   # ==============================================================================
   # 2. SENTINEL Frontend Static Site (React + Vite + Tailwind)
   # ==============================================================================
   - type: web
     name: sentinel-frontend
-    env: static
-    plan: free
+    runtime: static
     region: oregon
     buildCommand: cd frontend && npm install && npm run build
     staticPublishPath: frontend/dist
@@ -46,7 +45,7 @@ services:
         fromService:
           type: web
           name: sentinel-backend
-          property: url
+          envVarKey: RENDER_EXTERNAL_URL
 
 # ==============================================================================
 # 3. SENTINEL Managed Persistent PostgreSQL Database
