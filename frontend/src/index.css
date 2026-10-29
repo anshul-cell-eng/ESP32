@@ -8,7 +8,7 @@
   }
 
   body {
-    background-color: #051E22;
+    background-color: #2E2A27;
     color: #F7FAFC;
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
     -webkit-font-smoothing: antialiased;
@@ -22,7 +22,7 @@
   background: 
     radial-gradient(circle at 80% 20%, rgba(53, 215, 232, 0.08) 0%, transparent 40%),
     radial-gradient(circle at 20% 70%, rgba(255, 116, 109, 0.05) 0%, transparent 45%),
-    radial-gradient(ellipse at 75% 30%, #083F45 0%, #062E32 35%, #052521 65%, #091326 100%);
+    radial-gradient(ellipse at 75% 30%, #3B3632 0%, #2E2A27 45%, #24201E 100%);
   background-attachment: fixed;
 }
 
@@ -39,7 +39,7 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #051E22;
+  background: #2E2A27;
 }
 
 ::-webkit-scrollbar-thumb {

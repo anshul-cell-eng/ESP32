@@ -45,7 +45,7 @@ export const TopNav: React.FC<TopNavProps> = ({ onToggleDemoDrawer, onOpenDashbo
   ];
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-[#051E22]/80 backdrop-blur-xl border-b border-[#C0D1D4]/10 px-4 sm:px-6 lg:px-12 py-3 transition-colors duration-200">
+    <header className="sticky top-0 z-40 w-full bg-[#2E2A27]/80 backdrop-blur-xl border-b border-[#C0D1D4]/10 px-4 sm:px-6 lg:px-12 py-3 transition-colors duration-200">
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
         {/* Left: Brand Identity */}
         <div className="flex items-center gap-3">

@@ -21,7 +21,7 @@ export default {
           mutedText: '#C0D1D4',
 
           // Surface & Cards (Deep atmospheric teals & slates)
-          bg: '#051E22',
+          bg: '#2E2A27',
           surface: '#08252A',
           surfaceLight: '#0C343B',
           panel: '#0B2C33',

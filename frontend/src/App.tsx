@@ -55,7 +55,7 @@ const MainLayout: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#051E22] editorial-bg editorial-noise text-[#F7FAFC] flex flex-col font-sans selection:bg-[#35D7E8]/30 selection:text-[#35D7E8] relative overflow-x-hidden">
+    <div className="min-h-screen bg-[#2E2A27] editorial-bg editorial-noise text-[#F7FAFC] flex flex-col font-sans selection:bg-[#35D7E8]/30 selection:text-[#35D7E8] relative overflow-x-hidden">
       {/* Cinematic Intro overlay if not skipped */}
       {!introDone && (
         <CinematicIntro onComplete={() => setIntroDone(true)} />

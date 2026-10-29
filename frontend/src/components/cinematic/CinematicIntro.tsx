@@ -40,7 +40,7 @@ export const CinematicIntro: React.FC<CinematicIntroProps> = ({ onComplete }) =>
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-[#051E22] editorial-bg flex flex-col items-center justify-center overflow-hidden select-none">
+    <div className="fixed inset-0 z-50 bg-[#2E2A27] editorial-bg flex flex-col items-center justify-center overflow-hidden select-none">
       <div className="relative z-10 flex flex-col items-center max-w-sm px-6 text-center animate-in fade-in duration-300">
         {/* Hardware Emblem Icon */}
         <div className="w-16 h-16 rounded-2xl bg-[#0B2C33]/90 border border-[#35D7E8]/30 flex items-center justify-center mb-5 shadow-hero">
