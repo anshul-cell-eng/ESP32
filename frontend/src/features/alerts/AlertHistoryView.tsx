@@ -88,20 +88,20 @@ export const AlertHistoryView: React.FC = () => {
             const config = {
               CRITICAL: {
                 icon: AlertCircle,
-                border: 'border-rose-900/40',
-                badgeBg: 'bg-rose-950/30 text-sentinel-critical border-rose-900/40',
+                border: 'border-sentinel-critical/40',
+                badgeBg: 'bg-sentinel-critical/15 text-sentinel-critical border-sentinel-critical/40',
                 badgeText: 'CRITICAL',
               },
               WARNING: {
                 icon: AlertTriangle,
-                border: 'border-amber-900/40',
-                badgeBg: 'bg-amber-950/30 text-sentinel-warning border-amber-900/40',
+                border: 'border-sentinel-warning/40',
+                badgeBg: 'bg-sentinel-warning/15 text-sentinel-warning border-sentinel-warning/40',
                 badgeText: 'WARNING',
               },
               SAFE: {
                 icon: CheckCircle2,
-                border: 'border-emerald-900/40',
-                badgeBg: 'bg-emerald-950/30 text-sentinel-safe border-emerald-900/40',
+                border: 'border-sentinel-safe/40',
+                badgeBg: 'bg-sentinel-safe/15 text-sentinel-safe border-sentinel-safe/40',
                 badgeText: 'RECOVERY',
               },
               INFO: {
@@ -112,8 +112,8 @@ export const AlertHistoryView: React.FC = () => {
               },
               ERROR: {
                 icon: AlertCircle,
-                border: 'border-rose-900/40',
-                badgeBg: 'bg-rose-950/30 text-sentinel-critical border-rose-900/40',
+                border: 'border-sentinel-critical/40',
+                badgeBg: 'bg-sentinel-critical/15 text-sentinel-critical border-sentinel-critical/40',
                 badgeText: 'ERROR',
               },
             }[evt.severity as Severity] || {

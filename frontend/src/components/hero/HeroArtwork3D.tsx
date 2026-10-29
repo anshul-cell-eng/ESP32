@@ -25,34 +25,37 @@ export const HeroArtwork3D: React.FC<HeroArtwork3DProps> = ({ status, reducedMot
   const mouseTargetRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const mouseCurrentRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
 
-  // Editorial Palette Config for 3D Materials
+  // Refined Industrial Palette for 3D Materials
   const statusPalette = {
     SAFE: {
-      accent: 0x35d7e8,      // Radiant Editorial Cyan
-      secondary: 0x22c55e,   // Emerald Safe Accent
-      emissive: 0x168a98,
-      rim: 0x2dd4bf,
+      accent: 0x45d9e6,      // Cyan accent #45D9E6
+      secondary: 0x32c98a,   // Safe green #32C98A
+      emissive: 0x183638,
+      rim: 0x45d9e6,
       lightIntensity: 2.2,
-      particleColor: 0x35d7e8,
+      particleColor: 0x45d9e6,
       ringSpeed: 0.0025,
+      ringIntensity: 0.1,
     },
     WARNING: {
-      accent: 0xf59e0b,      // Warm Amber
-      secondary: 0xd97706,
-      emissive: 0xb45309,
-      rim: 0xfbbf24,
+      accent: 0xf3b64b,      // Warning amber #F3B64B
+      secondary: 0xf3b64b,
+      emissive: 0x242e20,
+      rim: 0xf3b64b,
       lightIntensity: 2.8,
-      particleColor: 0xf59e0b,
+      particleColor: 0xf3b64b,
       ringSpeed: 0.0055,
+      ringIntensity: 0.3,
     },
     CRITICAL: {
-      accent: 0xff746d,      // Soft Coral Ruby Accent
-      secondary: 0xdc2626,
-      emissive: 0xbe123c,
-      rim: 0xff8e88,
+      accent: 0xff6868,      // Critical red #FF6868
+      secondary: 0xff6868,
+      emissive: 0x2e1818,
+      rim: 0xff6868,
       lightIntensity: 3.8,
-      particleColor: 0xff746d,
+      particleColor: 0xff6868,
       ringSpeed: 0.011,
+      ringIntensity: 0.6,
     },
   }[status];
 
@@ -133,17 +136,17 @@ export const HeroArtwork3D: React.FC<HeroArtwork3DProps> = ({ status, reducedMot
     container.appendChild(renderer.domElement);
     rendererRef.current = renderer;
 
-    // 3. Lighting Setup (Sophisticated Editorial Studio Lighting)
-    const ambientLight = new THREE.AmbientLight(0x0a2228, 1.8);
+    // 3. Lighting Setup (Sophisticated Industrial Studio Lighting)
+    const ambientLight = new THREE.AmbientLight(0x263b3c, 1.8);
     scene.add(ambientLight);
 
-    // Key Directional Light (Warm Off-Axis)
-    const keyLight = new THREE.DirectionalLight(0xe8f7fa, 2.2);
+    // Key Directional Light (Crisp Off-Axis)
+    const keyLight = new THREE.DirectionalLight(0xf5f5f0, 2.2);
     keyLight.position.set(4, 6, 5);
     scene.add(keyLight);
 
     // Atmospheric Teal Fill Light
-    const fillLight = new THREE.DirectionalLight(0x0c4b54, 1.5);
+    const fillLight = new THREE.DirectionalLight(0x3a5553, 1.5);
     fillLight.position.set(-5, -3, 3);
     scene.add(fillLight);
 
@@ -178,7 +181,7 @@ export const HeroArtwork3D: React.FC<HeroArtwork3DProps> = ({ status, reducedMot
       return shape;
     };
 
-    // A. Outer Titanium Casing (Beveled Rim)
+    // A. Outer Beveled Casing (Elevated Teal Metal)
     const outerHexShape = createHexShape(2.3);
     const outerExtrudeSettings = {
       depth: 0.22,
@@ -191,16 +194,16 @@ export const HeroArtwork3D: React.FC<HeroArtwork3DProps> = ({ status, reducedMot
     const outerGeo = new THREE.ExtrudeGeometry(outerHexShape, outerExtrudeSettings);
     outerGeo.center();
 
-    // Dark Brushed Titanium Metallic Material
+    // Refined Elevated Teal Metallic Material
     const outerMat = new THREE.MeshStandardMaterial({
-      color: 0x16343b,
-      metalness: 0.88,
-      roughness: 0.28,
+      color: 0x204345,
+      metalness: 0.82,
+      roughness: 0.25,
     });
     const outerMesh = new THREE.Mesh(outerGeo, outerMat);
     rootGroup.add(outerMesh);
 
-    // B. Recessed Frosted Glass Shield Face
+    // B. Recessed Shield Face (Primary Teal Card Material, Visible Depth)
     const innerHexShape = createHexShape(2.05);
     const innerExtrudeSettings = {
       depth: 0.12,
@@ -212,15 +215,15 @@ export const HeroArtwork3D: React.FC<HeroArtwork3DProps> = ({ status, reducedMot
     const innerGeo = new THREE.ExtrudeGeometry(innerHexShape, innerExtrudeSettings);
     innerGeo.center();
 
-    // Translucent Deep Teal-Green Coated Glass
+    // Translucent Refined Deep-Teal Shield
     const glassMat = new THREE.MeshPhysicalMaterial({
-      color: 0x06282e,
-      metalness: 0.2,
-      roughness: 0.18,
-      transmission: 0.65,
+      color: 0x183638,
+      metalness: 0.35,
+      roughness: 0.2,
+      transmission: 0.35,
       thickness: 1.2,
       transparent: true,
-      opacity: 0.92,
+      opacity: 0.94,
       reflectivity: 0.85,
     });
     const glassMesh = new THREE.Mesh(innerGeo, glassMat);

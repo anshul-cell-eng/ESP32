@@ -25,25 +25,31 @@ export const ThreeSafetyEmblem: React.FC<ThreeSafetyEmblemProps> = ({ status, re
   // Status color tokens (Industrial, professional, non-neon)
   const statusConfig = {
     SAFE: {
-      accent: 0x16a34a,     // Clean industrial green
-      rimAccent: 0x3b82f6,  // Subtle slate blue
-      ambient: 0x0f172a,
-      lightIntensity: 1.2,
+      accent: 0x32c98a,     // Clean industrial safe green #32C98A
+      rimAccent: 0x45d9e6,  // Restrained cyan highlights #45D9E6
+      ambient: 0x183638,
+      lightIntensity: 1.4,
       ringSpeed: 0.003,
+      ringColor: 0x45d9e6,
+      ringIntensity: 0.1,
     },
     WARNING: {
-      accent: 0xd97706,     // Clean industrial amber
-      rimAccent: 0xf59e0b,
-      ambient: 0x1f1406,
+      accent: 0xf3b64b,     // Clean industrial amber #F3B64B
+      rimAccent: 0xf3b64b,
+      ambient: 0x242e20,
       lightIntensity: 1.8,
       ringSpeed: 0.006,
+      ringColor: 0xf3b64b,
+      ringIntensity: 0.3,
     },
     CRITICAL: {
-      accent: 0xdc2626,     // Clean industrial red
-      rimAccent: 0xef4444,
-      ambient: 0x220b0e,
+      accent: 0xff6868,     // Clean industrial red #FF6868
+      rimAccent: 0xff6868,
+      ambient: 0x2e1818,
       lightIntensity: 2.4,
       ringSpeed: 0.012,
+      ringColor: 0xff6868,
+      ringIntensity: 0.6,
     },
   }[status];
 
@@ -68,17 +74,18 @@ export const ThreeSafetyEmblem: React.FC<ThreeSafetyEmblemProps> = ({ status, re
         if (child instanceof THREE.Mesh) {
           const m = child.material as THREE.MeshStandardMaterial;
           m.color.setHex(conf.rimAccent);
-          m.emissive.setHex(conf.accent);
-          m.emissiveIntensity = status === 'CRITICAL' ? 0.3 : 0.05;
+          m.emissive.setHex(conf.rimAccent);
+          m.emissiveIntensity = status === 'CRITICAL' ? 0.4 : status === 'WARNING' ? 0.25 : 0.1;
         }
       });
     }
 
-    // Update rear indicator ring
+    // Update rear indicator ring (Subtle in SAFE, Amber in WARNING, Red in CRITICAL)
     if (backRingRef.current) {
       const ringMat = backRingRef.current.material as THREE.MeshStandardMaterial;
-      ringMat.emissive.setHex(conf.accent);
-      ringMat.emissiveIntensity = status === 'CRITICAL' ? 0.4 : 0.1;
+      ringMat.color.setHex(conf.ringColor);
+      ringMat.emissive.setHex(conf.ringColor);
+      ringMat.emissiveIntensity = conf.ringIntensity;
     }
   }, [status, statusConfig]);
 
@@ -117,15 +124,15 @@ export const ThreeSafetyEmblem: React.FC<ThreeSafetyEmblemProps> = ({ status, re
     container.appendChild(renderer.domElement);
 
     // 2. Industrial Studio Lighting
-    const keyLight = new THREE.DirectionalLight(0xf8fafc, 1.6);
+    const keyLight = new THREE.DirectionalLight(0xf5f5f0, 2.0);
     keyLight.position.set(3, 4, 4);
     scene.add(keyLight);
 
-    const fillLight = new THREE.DirectionalLight(0x64748b, 0.8);
+    const fillLight = new THREE.DirectionalLight(0x3a5553, 1.2);
     fillLight.position.set(-3, -2, 2);
     scene.add(fillLight);
 
-    const rimLight = new THREE.DirectionalLight(0x3b82f6, 1.2);
+    const rimLight = new THREE.DirectionalLight(0x45d9e6, 1.5);
     rimLight.position.set(0, 4, -3);
     scene.add(rimLight);
 
@@ -139,7 +146,7 @@ export const ThreeSafetyEmblem: React.FC<ThreeSafetyEmblemProps> = ({ status, re
     scene.add(masterGroup);
     groupRef.current = masterGroup;
 
-    // 3. Precision Beveled Hexagonal Chassis (Titanium/Dark Steel)
+    // 3. Precision Beveled Hexagonal Chassis (Refined Deep-Teal Elevated Metal)
     const hexRadius = 1.65;
     const shape = new THREE.Shape();
     for (let i = 0; i < 6; i++) {
@@ -151,28 +158,28 @@ export const ThreeSafetyEmblem: React.FC<ThreeSafetyEmblemProps> = ({ status, re
     }
     shape.closePath();
 
-    // Outer Casing Geometry with substantial depth
+    // Outer Casing Geometry with visible beveled rim
     const outerExtrudeSettings: THREE.ExtrudeGeometryOptions = {
       depth: 0.32,
       bevelEnabled: true,
-      bevelSegments: 3,
+      bevelSegments: 4,
       steps: 1,
-      bevelSize: 0.08,
-      bevelThickness: 0.08,
+      bevelSize: 0.1,
+      bevelThickness: 0.1,
     };
     const casingGeo = new THREE.ExtrudeGeometry(shape, outerExtrudeSettings);
     casingGeo.center();
 
     const casingMat = new THREE.MeshStandardMaterial({
-      color: 0x1e293b,
-      metalness: 0.85,
-      roughness: 0.28,
+      color: 0x204345, // Elevated teal, visible against #183638 card
+      metalness: 0.78,
+      roughness: 0.25,
     });
     const casingMesh = new THREE.Mesh(casingGeo, casingMat);
     masterGroup.add(casingMesh);
     bevelRimRef.current = casingMesh;
 
-    // 4. Recessed Inner Face (Dark Matte Industrial Inset)
+    // 4. Recessed Inner Face (Coordinated Secondary Surface with depth)
     const innerRadius = 1.45;
     const innerShape = new THREE.Shape();
     for (let i = 0; i < 6; i++) {
@@ -188,14 +195,14 @@ export const ThreeSafetyEmblem: React.FC<ThreeSafetyEmblemProps> = ({ status, re
       depth: 0.08,
       bevelEnabled: true,
       bevelSegments: 2,
-      bevelSize: 0.03,
-      bevelThickness: 0.03,
+      bevelSize: 0.04,
+      bevelThickness: 0.04,
     });
     innerGeo.center();
     const innerMat = new THREE.MeshStandardMaterial({
-      color: 0x0f172a,
-      metalness: 0.6,
-      roughness: 0.45,
+      color: 0x263b3c, // Secondary teal surface, visible depth (not pitch black)
+      metalness: 0.45,
+      roughness: 0.35,
     });
     const innerMesh = new THREE.Mesh(innerGeo, innerMat);
     innerMesh.position.z = 0.16;
@@ -213,7 +220,9 @@ export const ThreeSafetyEmblem: React.FC<ThreeSafetyEmblemProps> = ({ status, re
       const tubeMat = new THREE.MeshStandardMaterial({
         color: statusConfig.rimAccent,
         metalness: 0.75,
-        roughness: 0.3,
+        roughness: 0.25,
+        emissive: statusConfig.rimAccent,
+        emissiveIntensity: 0.15,
       });
       return new THREE.Mesh(tubeGeo, tubeMat);
     };
@@ -227,7 +236,7 @@ export const ThreeSafetyEmblem: React.FC<ThreeSafetyEmblemProps> = ({ status, re
 
     // 6. Machined Central Indicator LED
     const ledBaseGeo = new THREE.CylinderGeometry(0.12, 0.14, 0.06, 24);
-    const ledBaseMat = new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.9, roughness: 0.2 });
+    const ledBaseMat = new THREE.MeshStandardMaterial({ color: 0x3a5553, metalness: 0.85, roughness: 0.25 });
     const ledBase = new THREE.Mesh(ledBaseGeo, ledBaseMat);
     ledBase.rotation.x = Math.PI / 2;
     ledBase.position.z = 0.22;
@@ -237,7 +246,7 @@ export const ThreeSafetyEmblem: React.FC<ThreeSafetyEmblemProps> = ({ status, re
     const ledLensMat = new THREE.MeshStandardMaterial({
       color: statusConfig.accent,
       emissive: statusConfig.accent,
-      emissiveIntensity: 0.8,
+      emissiveIntensity: 0.9,
       roughness: 0.1,
     });
     const ledLens = new THREE.Mesh(ledLensGeo, ledLensMat);
@@ -245,14 +254,14 @@ export const ThreeSafetyEmblem: React.FC<ThreeSafetyEmblemProps> = ({ status, re
     masterGroup.add(ledLens);
     indicatorLedRef.current = ledLens;
 
-    // 7. Subtle Rear Mechanical Indicator Ring (Calm, understated)
+    // 7. Scanning Indicator Ring (Subtle cyan in SAFE, Amber in WARNING, Red in CRITICAL)
     const ringGeo = new THREE.TorusGeometry(2.1, 0.025, 12, 64);
     const ringMat = new THREE.MeshStandardMaterial({
-      color: 0x334155,
+      color: statusConfig.ringColor,
       metalness: 0.8,
-      roughness: 0.4,
-      emissive: statusConfig.accent,
-      emissiveIntensity: 0.1,
+      roughness: 0.35,
+      emissive: statusConfig.ringColor,
+      emissiveIntensity: statusConfig.ringIntensity,
     });
     const ringMesh = new THREE.Mesh(ringGeo, ringMat);
     ringMesh.position.z = -0.15;

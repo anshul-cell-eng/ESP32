@@ -9,22 +9,25 @@ interface FallbackEmblemProps {
 export const FallbackEmblem: React.FC<FallbackEmblemProps> = ({ status, size = 220 }) => {
   const config = {
     SAFE: {
-      accent: '#16A34A',
-      bezel: '#1E293B',
-      indicator: '#22C55E',
-      ringColor: 'rgba(59, 130, 246, 0.25)',
+      accent: '#45D9E6',
+      bezel: '#204345',
+      innerFace: '#263B3C',
+      indicator: '#32C98A',
+      ringColor: 'rgba(69, 217, 230, 0.25)',
     },
     WARNING: {
-      accent: '#D97706',
-      bezel: '#2D2012',
-      indicator: '#F59E0B',
-      ringColor: 'rgba(217, 119, 6, 0.35)',
+      accent: '#F3B64B',
+      bezel: '#243733',
+      innerFace: '#263B3C',
+      indicator: '#F3B64B',
+      ringColor: 'rgba(243, 182, 75, 0.45)',
     },
     CRITICAL: {
-      accent: '#DC2626',
-      bezel: '#341418',
-      indicator: '#EF4444',
-      ringColor: 'rgba(220, 38, 38, 0.45)',
+      accent: '#FF6868',
+      bezel: '#2e2828',
+      innerFace: '#2a2222',
+      indicator: '#FF6868',
+      ringColor: 'rgba(255, 104, 104, 0.65)',
     },
   }[status];
 
@@ -39,7 +42,7 @@ export const FallbackEmblem: React.FC<FallbackEmblemProps> = ({ status, size = 2
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        {/* Subtle rear mechanical ring */}
+        {/* Subtle rear mechanical ring (Subtle in SAFE, Amber in WARN, Red in CRIT) */}
         <circle
           cx="100"
           cy="100"
@@ -49,19 +52,19 @@ export const FallbackEmblem: React.FC<FallbackEmblemProps> = ({ status, size = 2
           strokeDasharray="16 8"
         />
 
-        {/* Outer Titanium Beveled Shield */}
+        {/* Outer Beveled Teal Shield */}
         <polygon
           points="100,28 160,62 160,138 100,172 40,138 40,62"
-          fill="#1E293B"
-          stroke="rgba(255, 255, 255, 0.15)"
+          fill={config.bezel}
+          stroke="#3A5553"
           strokeWidth="1.5"
         />
 
-        {/* Recessed Inner Face */}
+        {/* Recessed Inner Face (Visible depth, not black) */}
         <polygon
           points="100,38 150,67 150,133 100,162 50,133 50,67"
-          fill="#0F172A"
-          stroke="rgba(255, 255, 255, 0.08)"
+          fill={config.innerFace}
+          stroke="#3A5553"
           strokeWidth="1"
         />
 
@@ -90,7 +93,7 @@ export const FallbackEmblem: React.FC<FallbackEmblemProps> = ({ status, size = 2
           cx="100"
           cy="100"
           r="6"
-          fill="#334155"
+          fill="#3A5553"
         />
         <circle
           cx="100"

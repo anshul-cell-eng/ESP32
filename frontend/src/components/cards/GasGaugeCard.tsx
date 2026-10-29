@@ -27,7 +27,7 @@ export const GasGaugeCard: React.FC<GasGaugeCardProps> = ({
     SAFE: {
       label: 'NORMAL',
       color: 'text-sentinel-safe',
-      badgeBg: 'bg-emerald-950/30 text-sentinel-safe border-emerald-900/40',
+      badgeBg: 'bg-sentinel-safe/15 text-sentinel-safe border-sentinel-safe/40',
       gaugeBar: 'bg-sentinel-safe',
       icon: ShieldCheck,
       desc: 'Combustible gas concentrations within safe baseline range.',
@@ -35,7 +35,7 @@ export const GasGaugeCard: React.FC<GasGaugeCardProps> = ({
     WARNING: {
       label: 'ELEVATED',
       color: 'text-sentinel-warning',
-      badgeBg: 'bg-amber-950/30 text-sentinel-warning border-amber-900/40',
+      badgeBg: 'bg-sentinel-warning/15 text-sentinel-warning border-sentinel-warning/40',
       gaugeBar: 'bg-sentinel-warning',
       icon: AlertTriangle,
       desc: 'Elevated gas detected. Caution advised; inspect surrounding area.',
@@ -43,7 +43,7 @@ export const GasGaugeCard: React.FC<GasGaugeCardProps> = ({
     CRITICAL: {
       label: 'CRITICAL',
       color: 'text-sentinel-critical',
-      badgeBg: 'bg-rose-950/30 text-sentinel-critical border-rose-900/40',
+      badgeBg: 'bg-sentinel-critical/15 text-sentinel-critical border-sentinel-critical/40',
       gaugeBar: 'bg-sentinel-critical',
       icon: ShieldAlert,
       desc: 'Critical gas leakage threshold breached! Emergency cutoff activated.',
@@ -65,7 +65,7 @@ export const GasGaugeCard: React.FC<GasGaugeCardProps> = ({
               <div className="flex items-center gap-2">
                 <h3 className="text-sm font-semibold text-white">MQ-2 Combustible Gas Sensor</h3>
                 {isStale || !isOnline ? (
-                  <span className="px-1.5 py-0.5 rounded text-[10px] font-mono font-medium bg-rose-950/30 text-sentinel-critical border border-rose-900/40 flex items-center gap-1">
+                  <span className="px-1.5 py-0.5 rounded text-[10px] font-mono font-medium bg-sentinel-critical/15 text-sentinel-critical border border-sentinel-critical/40 flex items-center gap-1">
                     <WifiOff className="w-2.5 h-2.5" />
                     STALE
                   </span>
@@ -82,9 +82,17 @@ export const GasGaugeCard: React.FC<GasGaugeCardProps> = ({
           <StatusIcon className={`w-5 h-5 ${!isOnline ? 'text-sentinel-muted' : statusConfig.color}`} />
         </div>
 
-        {/* Primary Measurement */}
+        {/* Primary Measurement: White in Normal, Amber in Warning, Red in Critical */}
         <div className="my-3 flex items-baseline gap-2.5">
-          <span className="text-3xl sm:text-4xl font-extrabold font-mono text-white tracking-tight">
+          <span
+            className={`text-3xl sm:text-4xl font-extrabold font-mono tracking-tight ${
+              status === 'CRITICAL'
+                ? 'text-sentinel-critical'
+                : status === 'WARNING'
+                ? 'text-sentinel-warning'
+                : 'text-white'
+            }`}
+          >
             {adc}
           </span>
           <span className="text-xs font-mono text-sentinel-muted">/ 4095 ADC</span>

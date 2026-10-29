@@ -114,8 +114,8 @@ export const DiagnosticsView: React.FC = () => {
             <span
               className={`px-1.5 py-0.2 rounded text-[10px] font-mono font-bold border ${
                 isOnline
-                  ? 'bg-emerald-950/30 text-sentinel-safe border-emerald-900/40'
-                  : 'bg-rose-950/30 text-sentinel-critical border-rose-900/40'
+                  ? 'bg-sentinel-safe/15 text-sentinel-safe border-sentinel-safe/40'
+                  : 'bg-sentinel-critical/15 text-sentinel-critical border-sentinel-critical/40'
               }`}
             >
               {isOnline ? 'ONLINE' : 'OFFLINE'}
@@ -155,7 +155,7 @@ export const DiagnosticsView: React.FC = () => {
               <Server className="w-4 h-4 text-sentinel-blue" />
               <h3 className="text-xs font-semibold text-white">FastAPI Daemon</h3>
             </div>
-            <span className="px-1.5 py-0.2 rounded text-[10px] font-mono font-bold bg-emerald-950/30 text-sentinel-safe border border-emerald-900/40">
+            <span className="px-1.5 py-0.2 rounded text-[10px] font-mono font-bold bg-sentinel-safe/15 text-sentinel-safe border border-sentinel-safe/40">
               {diag?.backendStatus || 'RUNNING'}
             </span>
           </div>
@@ -191,7 +191,7 @@ export const DiagnosticsView: React.FC = () => {
               <Database className="w-4 h-4 text-sentinel-blue" />
               <h3 className="text-xs font-semibold text-white">Database &amp; Stream</h3>
             </div>
-            <span className="px-1.5 py-0.2 rounded text-[10px] font-mono font-bold bg-emerald-950/30 text-sentinel-safe border border-emerald-900/40">
+            <span className="px-1.5 py-0.2 rounded text-[10px] font-mono font-bold bg-sentinel-safe/15 text-sentinel-safe border border-sentinel-safe/40">
               {diag?.databaseStatus || 'ONLINE'}
             </span>
           </div>
@@ -255,8 +255,8 @@ export const DiagnosticsView: React.FC = () => {
           <div
             className={`p-3 rounded-lg border text-xs font-mono mb-3 flex items-start gap-2.5 ${
               discoverResult.success
-                ? 'bg-emerald-950/20 border-emerald-900/40 text-sentinel-safe'
-                : 'bg-amber-950/20 border-amber-900/40 text-sentinel-warning'
+                ? 'bg-sentinel-safe/15 border-sentinel-safe/40 text-sentinel-safe'
+                : 'bg-sentinel-warning/15 border-sentinel-warning/40 text-sentinel-warning'
             }`}
           >
             {discoverResult.success ? (
@@ -275,8 +275,8 @@ export const DiagnosticsView: React.FC = () => {
           <div
             className={`p-3 rounded-lg border text-xs font-mono flex items-start gap-2.5 ${
               pingResult.success
-                ? 'bg-emerald-950/20 border-emerald-900/40 text-sentinel-safe'
-                : 'bg-rose-950/20 border-rose-900/40 text-sentinel-critical'
+                ? 'bg-sentinel-safe/15 border-sentinel-safe/40 text-sentinel-safe'
+                : 'bg-sentinel-critical/15 border-sentinel-critical/40 text-sentinel-critical'
             }`}
           >
             {pingResult.success ? (

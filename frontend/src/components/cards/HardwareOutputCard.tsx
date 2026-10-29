@@ -34,55 +34,61 @@ export const HardwareOutputCard: React.FC<HardwareOutputCardProps> = ({
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
-          {/* Relay Solenoid Output */}
-          <div className={`p-3 rounded-lg border ${
+          {/* Relay Solenoid Output (Mechanical Valve Isolation) */}
+          <div className={`p-3 rounded-lg border transition-all ${
             relayState
-              ? 'bg-rose-950/20 border-rose-900/40 text-white'
-              : 'bg-sentinel-surface border-sentinel-borderSubtle text-sentinel-textSecondary'
+              ? 'bg-sentinel-critical/20 border-l-4 border-l-sentinel-critical border-sentinel-critical/50 text-white'
+              : 'bg-sentinel-panelHover border-l-4 border-l-sentinel-blue border-sentinel-border text-sentinel-textSecondary'
           }`}>
             <div className="flex items-center justify-between mb-1.5">
               <div className="flex items-center gap-1.5">
-                <Power className={`w-3.5 h-3.5 ${relayState ? 'text-sentinel-critical' : 'text-sentinel-muted'}`} />
-                <span className="text-xs font-medium text-white">Relay Output</span>
+                <div className={`w-5 h-5 rounded flex items-center justify-center ${relayState ? 'bg-sentinel-critical/30 text-sentinel-critical' : 'bg-sentinel-surface text-sentinel-blue'}`}>
+                  <Power className="w-3.5 h-3.5" />
+                </div>
+                <div>
+                  <span className="text-xs font-semibold text-white">Relay Solenoid</span>
+                  <span className="text-[9px] font-mono text-sentinel-muted block leading-none">VALVE CUTOFF</span>
+                </div>
               </div>
               <span className={`px-1.5 py-0.5 rounded text-[10px] font-mono font-bold ${
                 relayState
                   ? 'bg-sentinel-critical text-white'
-                  : 'bg-sentinel-panel text-sentinel-muted'
+                  : 'bg-sentinel-surface text-sentinel-safe border border-sentinel-safe/30'
               }`}>
-                {relayState ? 'TRIPPED (ON)' : 'PASS (OFF)'}
+                {relayState ? 'TRIPPED (CLOSED)' : 'PASS (OPEN)'}
               </span>
             </div>
-            <p className="text-[10px] text-sentinel-muted font-mono">
-              GPIO 13 • {relayState ? 'Solenoid isolation active' : 'Gas permissive normal'}
+            <p className="text-[10px] text-sentinel-muted font-mono mt-1">
+              GPIO 13 • {relayState ? 'Emergency valve closed' : 'Gas permissive normal'}
             </p>
           </div>
 
-          {/* Active Buzzer Output */}
-          <div className={`p-3 rounded-lg border ${
+          {/* Active Buzzer Output (Acoustic Siren Alarm) */}
+          <div className={`p-3 rounded-lg border transition-all ${
             buzzerState
-              ? 'bg-amber-950/20 border-amber-900/40 text-white'
-              : 'bg-sentinel-surface border-sentinel-borderSubtle text-sentinel-textSecondary'
+              ? 'bg-sentinel-warning/20 border-l-4 border-l-sentinel-warning border-sentinel-warning/50 text-white'
+              : 'bg-sentinel-surface border-l-4 border-l-sentinel-muted border-sentinel-border text-sentinel-textSecondary'
           }`}>
             <div className="flex items-center justify-between mb-1.5">
               <div className="flex items-center gap-1.5">
-                {buzzerState ? (
-                  <Volume2 className="w-3.5 h-3.5 text-sentinel-warning" />
-                ) : (
-                  <VolumeX className="w-3.5 h-3.5 text-sentinel-muted" />
-                )}
-                <span className="text-xs font-medium text-white">Audio Alarm</span>
+                <div className={`w-5 h-5 rounded-full flex items-center justify-center ${buzzerState ? 'bg-sentinel-warning/30 text-sentinel-warning' : 'bg-sentinel-panel text-sentinel-muted'}`}>
+                  {buzzerState ? <Volume2 className="w-3.5 h-3.5" /> : <VolumeX className="w-3.5 h-3.5" />}
+                </div>
+                <div>
+                  <span className="text-xs font-semibold text-white">Acoustic Siren</span>
+                  <span className="text-[9px] font-mono text-sentinel-muted block leading-none">PIEZO DRIVER</span>
+                </div>
               </div>
               <span className={`px-1.5 py-0.5 rounded text-[10px] font-mono font-bold ${
                 buzzerState
-                  ? 'bg-sentinel-warning text-black'
-                  : 'bg-sentinel-panel text-sentinel-muted'
+                  ? 'bg-sentinel-warning text-black font-extrabold'
+                  : 'bg-sentinel-panel text-sentinel-muted border border-sentinel-border'
               }`}>
-                {buzzerState ? 'ACTIVE' : 'MUTED'}
+                {buzzerState ? 'SOUNDING' : 'MUTED'}
               </span>
             </div>
-            <p className="text-[10px] text-sentinel-muted font-mono">
-              GPIO 14 • {buzzerState ? 'Audible buzzer sounding' : 'Audible driver off'}
+            <p className="text-[10px] text-sentinel-muted font-mono mt-1">
+              GPIO 14 • {buzzerState ? 'Audible piezo sounding' : 'Audible alarm silent'}
             </p>
           </div>
 
@@ -118,7 +124,7 @@ export const HardwareOutputCard: React.FC<HardwareOutputCardProps> = ({
                 <Monitor className="w-3.5 h-3.5 text-sentinel-muted" />
                 <span className="text-xs font-medium text-white">I2C OLED Screen</span>
               </div>
-              <span className="px-1.5 py-0.5 rounded text-[10px] font-mono text-sentinel-muted bg-sentinel-panel">
+              <span className="px-1.5 py-0.5 rounded text-[10px] font-mono text-sentinel-muted bg-sentinel-panel border border-sentinel-border">
                 OPTIONAL
               </span>
             </div>

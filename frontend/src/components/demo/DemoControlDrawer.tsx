@@ -31,7 +31,7 @@ export const DemoControlDrawer: React.FC<DemoControlDrawerProps> = ({ isOpen, on
       icon: CheckCircle,
       color: 'text-sentinel-safe',
       badge: 'SAFE',
-      badgeStyle: 'bg-emerald-950/30 text-sentinel-safe border-emerald-900/40',
+      badgeStyle: 'bg-sentinel-safe/15 text-sentinel-safe border-sentinel-safe/40',
     },
     {
       id: 'WARNING',
@@ -41,7 +41,7 @@ export const DemoControlDrawer: React.FC<DemoControlDrawerProps> = ({ isOpen, on
       icon: AlertTriangle,
       color: 'text-sentinel-warning',
       badge: 'WARNING',
-      badgeStyle: 'bg-amber-950/30 text-sentinel-warning border-amber-900/40',
+      badgeStyle: 'bg-sentinel-warning/15 text-sentinel-warning border-sentinel-warning/40',
     },
     {
       id: 'CRITICAL',
@@ -51,7 +51,7 @@ export const DemoControlDrawer: React.FC<DemoControlDrawerProps> = ({ isOpen, on
       icon: AlertCircle,
       color: 'text-sentinel-critical',
       badge: 'CRITICAL',
-      badgeStyle: 'bg-rose-950/30 text-sentinel-critical border-rose-900/40',
+      badgeStyle: 'bg-sentinel-critical/15 text-sentinel-critical border-sentinel-critical/40',
     },
     {
       id: 'RECOVERY',
@@ -61,7 +61,7 @@ export const DemoControlDrawer: React.FC<DemoControlDrawerProps> = ({ isOpen, on
       icon: RotateCcw,
       color: 'text-sentinel-blue',
       badge: 'RECOVERY',
-      badgeStyle: 'bg-blue-950/30 text-sentinel-blue border-blue-900/40',
+      badgeStyle: 'bg-sentinel-blue/15 text-sentinel-blue border-sentinel-blue/40',
     },
   ];
 
@@ -174,7 +174,7 @@ export const DemoControlDrawer: React.FC<DemoControlDrawerProps> = ({ isOpen, on
 
           <button
             onClick={handleApplySlider}
-            className="w-full py-1.5 rounded-md bg-sentinel-blue hover:bg-sentinel-blueHover text-white font-medium text-xs transition-colors cursor-pointer"
+            className="w-full py-1.5 rounded-md bg-sentinel-blue hover:bg-sentinel-blueHover text-sentinel-panel font-bold text-xs transition-colors cursor-pointer"
           >
             Inject Custom Value
           </button>

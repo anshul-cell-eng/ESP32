@@ -45,7 +45,7 @@ export const TopNav: React.FC<TopNavProps> = ({ onToggleDemoDrawer, onOpenDashbo
   ];
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-[#2E2A27]/80 backdrop-blur-xl border-b border-[#C0D1D4]/10 px-4 sm:px-6 lg:px-12 py-3 transition-colors duration-200">
+    <header className="sticky top-0 z-40 w-full bg-sentinel-bg/90 backdrop-blur-xl border-b border-sentinel-border px-4 sm:px-6 lg:px-12 py-3 transition-colors duration-200">
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
         {/* Left: Brand Identity */}
         <div className="flex items-center gap-3">
@@ -53,22 +53,22 @@ export const TopNav: React.FC<TopNavProps> = ({ onToggleDemoDrawer, onOpenDashbo
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             className="flex items-center gap-2.5 text-left group cursor-pointer"
           >
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#0B2C33] to-[#062228] border border-[#35D7E8]/30 flex items-center justify-center text-[#35D7E8] shadow-sm group-hover:border-[#35D7E8]/60 transition-colors">
+            <div className="w-8 h-8 rounded-xl bg-sentinel-panel border border-sentinel-border flex items-center justify-center text-sentinel-blue shadow-sm group-hover:border-sentinel-blue transition-colors">
               <Shield className="w-4 h-4" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-sans font-extrabold text-base tracking-tight text-[#F7FAFC]">
+                <span className="font-sans font-extrabold text-base tracking-tight text-sentinel-text">
                   SENTINEL
                 </span>
-                <span className="w-1.5 h-1.5 rounded-full bg-[#35D7E8]" />
+                <span className="w-1.5 h-1.5 rounded-full bg-sentinel-blue" />
               </div>
             </div>
           </button>
         </div>
 
-        {/* Center: Editorial Navigation Links (Desktop) */}
-        <nav className="hidden lg:flex items-center gap-1 bg-[#06282E]/60 p-1 rounded-full border border-[#C0D1D4]/10 backdrop-blur-md">
+        {/* Center: Navigation Links (Desktop) */}
+        <nav className="hidden lg:flex items-center gap-1 bg-sentinel-surface p-1 rounded-full border border-sentinel-border">
           {navItems.map((item) => {
             const isActive = activeTab === item.id;
             return (
@@ -77,8 +77,8 @@ export const TopNav: React.FC<TopNavProps> = ({ onToggleDemoDrawer, onOpenDashbo
                 onClick={() => handleNavClick(item.id)}
                 className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all duration-200 cursor-pointer ${
                   isActive
-                    ? 'bg-[#35D7E8] text-[#051E22] font-semibold shadow-cyanGlow'
-                    : 'text-[#C0D1D4] hover:text-[#F7FAFC] hover:bg-white/5'
+                    ? 'bg-sentinel-blue text-sentinel-panel font-bold shadow-cyanGlow'
+                    : 'text-sentinel-textSecondary hover:text-white hover:bg-sentinel-panel/60'
                 }`}
               >
                 {item.label}
@@ -90,13 +90,13 @@ export const TopNav: React.FC<TopNavProps> = ({ onToggleDemoDrawer, onOpenDashbo
         {/* Right: Controls, Live/Demo Mode & CTA */}
         <div className="flex items-center gap-2.5 sm:gap-3">
           {/* Mode Switcher */}
-          <div className="flex items-center bg-[#06282E]/80 p-0.5 rounded-full border border-[#C0D1D4]/10 text-xs font-mono">
+          <div className="flex items-center bg-sentinel-surface p-0.5 rounded-full border border-sentinel-border text-xs font-mono">
             <button
               onClick={() => setMode('LIVE')}
               className={`px-2.5 py-1 rounded-full font-medium transition-colors cursor-pointer ${
                 isLive
-                  ? 'bg-[#35D7E8] text-[#051E22] font-bold'
-                  : 'text-[#C0D1D4] hover:text-[#F7FAFC]'
+                  ? 'bg-sentinel-blue text-sentinel-panel font-bold'
+                  : 'text-sentinel-textSecondary hover:text-white'
               }`}
             >
               LIVE
@@ -105,8 +105,8 @@ export const TopNav: React.FC<TopNavProps> = ({ onToggleDemoDrawer, onOpenDashbo
               onClick={() => setMode('DEMO')}
               className={`px-2.5 py-1 rounded-full font-medium transition-colors cursor-pointer ${
                 !isLive
-                  ? 'bg-[#F59E0B] text-[#051E22] font-bold'
-                  : 'text-[#C0D1D4] hover:text-[#F7FAFC]'
+                  ? 'bg-sentinel-warning text-black font-bold'
+                  : 'text-sentinel-textSecondary hover:text-white'
               }`}
             >
               DEMO
@@ -117,7 +117,7 @@ export const TopNav: React.FC<TopNavProps> = ({ onToggleDemoDrawer, onOpenDashbo
           {!isLive && (
             <button
               onClick={onToggleDemoDrawer}
-              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#F59E0B]/10 hover:bg-[#F59E0B]/20 border border-[#F59E0B]/30 text-[#F59E0B] text-xs font-medium transition-colors cursor-pointer"
+              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-sentinel-warning/15 hover:bg-sentinel-warning/25 border border-sentinel-warning/40 text-sentinel-warning text-xs font-medium transition-colors cursor-pointer"
               title="Open Presentation Scenarios"
             >
               <PlayCircle className="w-3.5 h-3.5" />
@@ -129,15 +129,15 @@ export const TopNav: React.FC<TopNavProps> = ({ onToggleDemoDrawer, onOpenDashbo
           <div 
             className={`hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-mono border ${
               !isLive
-                ? 'bg-[#F59E0B]/10 text-[#F59E0B] border-[#F59E0B]/30'
+                ? 'bg-sentinel-warning/15 text-sentinel-warning border-sentinel-warning/40'
                 : isOnline
-                ? 'bg-[#22C55E]/10 text-[#22C55E] border-[#22C55E]/30'
-                : 'bg-[#FF746D]/10 text-[#FF746D] border-[#FF746D]/30'
+                ? 'bg-sentinel-safe/15 text-sentinel-safe border-sentinel-safe/40'
+                : 'bg-sentinel-critical/15 text-sentinel-critical border-sentinel-critical/40'
             }`}
           >
             <span 
               className={`w-1.5 h-1.5 rounded-full ${
-                !isLive ? 'bg-[#F59E0B]' : isOnline ? 'bg-[#22C55E] animate-pulse' : 'bg-[#FF746D]'
+                !isLive ? 'bg-sentinel-warning' : isOnline ? 'bg-sentinel-safe animate-pulse' : 'bg-sentinel-critical'
               }`} 
             />
             <span className="text-[11px] font-semibold">
@@ -150,8 +150,8 @@ export const TopNav: React.FC<TopNavProps> = ({ onToggleDemoDrawer, onOpenDashbo
             onClick={() => setSoundEnabled(!soundEnabled)}
             className={`p-2 rounded-full border transition-colors cursor-pointer ${
               soundEnabled
-                ? 'bg-[#35D7E8]/15 text-[#35D7E8] border-[#35D7E8]/40'
-                : 'bg-[#08252A] text-[#7E9A9E] border-[#C0D1D4]/10 hover:text-white'
+                ? 'bg-sentinel-blue/20 text-sentinel-blue border-sentinel-blue/50'
+                : 'bg-sentinel-surface text-sentinel-muted border-sentinel-border hover:text-white'
             }`}
             title={soundEnabled ? 'Mute Synthetic Audio Alarms' : 'Enable Synthetic Audio Alarms'}
           >
@@ -163,15 +163,15 @@ export const TopNav: React.FC<TopNavProps> = ({ onToggleDemoDrawer, onOpenDashbo
             onClick={() => handleNavClick('settings')}
             className={`p-2 rounded-full border transition-colors cursor-pointer ${
               activeTab === 'settings'
-                ? 'bg-[#35D7E8] text-[#051E22] border-[#35D7E8]'
-                : 'bg-[#08252A] text-[#C0D1D4] hover:text-white border-[#C0D1D4]/10'
+                ? 'bg-sentinel-blue text-sentinel-panel border-sentinel-blue'
+                : 'bg-sentinel-surface text-sentinel-textSecondary hover:text-white border-sentinel-border'
             }`}
             title="Settings & Configuration"
           >
             <SettingsIcon className="w-3.5 h-3.5" />
           </button>
 
-          {/* Compact Pill-Shaped Action Button: Open Dashboard */}
+          {/* Action Button: Non-red cyan action button */}
           <button
             onClick={() => {
               if (onOpenDashboard) onOpenDashboard();
@@ -180,7 +180,7 @@ export const TopNav: React.FC<TopNavProps> = ({ onToggleDemoDrawer, onOpenDashbo
                 if (el) el.scrollIntoView({ behavior: 'smooth' });
               }
             }}
-            className="flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#FF746D] hover:bg-[#E05D57] text-white text-xs font-semibold shadow-coralGlow transition-all duration-200 cursor-pointer"
+            className="flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-sentinel-blue hover:bg-sentinel-blueHover text-sentinel-panel text-xs font-bold shadow-cyanGlow transition-all duration-200 cursor-pointer"
           >
             <span>Dashboard</span>
             <ArrowDown className="w-3.5 h-3.5" />

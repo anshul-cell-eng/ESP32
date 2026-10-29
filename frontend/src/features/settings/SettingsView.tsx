@@ -300,7 +300,7 @@ export const SettingsView: React.FC = () => {
                 onClick={handleRequestNotif}
                 className={`px-3 py-1 rounded-md text-xs font-medium transition-colors cursor-pointer ${
                   notifGranted
-                    ? 'bg-emerald-950/30 text-sentinel-safe border border-emerald-900/40'
+                    ? 'bg-sentinel-safe/15 text-sentinel-safe border border-sentinel-safe/40'
                     : 'bg-sentinel-panel text-sentinel-textSecondary hover:text-white border border-sentinel-border'
                 }`}
               >
@@ -332,7 +332,7 @@ export const SettingsView: React.FC = () => {
                 onClick={() => setReducedMotion(!reducedMotion)}
                 className={`px-3 py-1 rounded-md text-xs font-medium transition-colors cursor-pointer ${
                   reducedMotion
-                    ? 'bg-sentinel-blue text-white'
+                    ? 'bg-sentinel-blue text-sentinel-panel font-bold'
                     : 'bg-sentinel-panel text-sentinel-muted hover:text-white border border-sentinel-border'
                 }`}
               >
@@ -352,7 +352,7 @@ export const SettingsView: React.FC = () => {
                 onClick={() => setSkipIntro(!skipIntro)}
                 className={`px-3 py-1 rounded-md text-xs font-medium transition-colors cursor-pointer ${
                   !skipIntro
-                    ? 'bg-emerald-950/30 text-sentinel-safe border border-emerald-900/40'
+                    ? 'bg-sentinel-safe/15 text-sentinel-safe border border-sentinel-safe/40'
                     : 'bg-sentinel-panel text-sentinel-muted border border-sentinel-border'
                 }`}
               >
@@ -363,7 +363,7 @@ export const SettingsView: React.FC = () => {
         </div>
 
         {errorMessage && (
-          <div className="p-3 rounded-lg bg-rose-950/30 border border-rose-900/40 text-sentinel-critical text-xs">
+          <div className="p-3 rounded-lg bg-sentinel-critical/15 border border-sentinel-critical/40 text-sentinel-critical text-xs">
             {errorMessage}
           </div>
         )}
@@ -380,7 +380,7 @@ export const SettingsView: React.FC = () => {
           <button
             type="submit"
             disabled={saving}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-sentinel-blue hover:bg-sentinel-blueHover text-white text-xs font-medium transition-colors cursor-pointer disabled:opacity-50"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-sentinel-blue hover:bg-sentinel-blueHover text-sentinel-panel font-bold text-xs transition-colors cursor-pointer disabled:opacity-50"
           >
             <Save className={`w-3.5 h-3.5 ${saving ? 'animate-spin' : ''}`} />
             <span>{saving ? 'Saving...' : 'Save Configuration'}</span>

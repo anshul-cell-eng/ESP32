@@ -11,8 +11,8 @@ export const HeroArtworkFallback: React.FC<HeroArtworkFallbackProps> = ({ status
   const isWarning = status === 'WARNING';
   const isCritical = status === 'CRITICAL';
 
-  const accentColor = isCritical ? '#FF746D' : isWarning ? '#F59E0B' : '#35D7E8';
-  const glowColor = isCritical ? 'rgba(255,116,109,0.3)' : isWarning ? 'rgba(245,158,11,0.25)' : 'rgba(53,215,232,0.25)';
+  const accentColor = isCritical ? '#FF6868' : isWarning ? '#F3B64B' : '#45D9E6';
+  const glowColor = isCritical ? 'rgba(255,104,104,0.3)' : isWarning ? 'rgba(243,182,75,0.25)' : 'rgba(69,217,230,0.25)';
 
   return (
     <div className={`relative flex items-center justify-center select-none ${className}`}>
@@ -27,20 +27,20 @@ export const HeroArtworkFallback: React.FC<HeroArtworkFallbackProps> = ({ status
         className="w-full max-w-[420px] h-auto drop-shadow-[0_20px_35px_rgba(0,0,0,0.6)]"
       >
         <defs>
-          {/* Titanium Metallic Gradient */}
+          {/* Elevated Teal Metallic Gradient */}
           <linearGradient id="fallbackMetal" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#1E3E45" />
-            <stop offset="35%" stopColor="#355860" />
-            <stop offset="50%" stopColor="#0F2428" />
-            <stop offset="70%" stopColor="#2D4D54" />
-            <stop offset="100%" stopColor="#0B1A1D" />
+            <stop offset="0%" stopColor="#204345" />
+            <stop offset="35%" stopColor="#3A5553" />
+            <stop offset="50%" stopColor="#183638" />
+            <stop offset="70%" stopColor="#263B3C" />
+            <stop offset="100%" stopColor="#204345" />
           </linearGradient>
 
-          {/* Frosted Glass Shield Body */}
+          {/* Refined Shield Body (Deep-Teal Visible Surface) */}
           <linearGradient id="fallbackGlass" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#0B3037" stopOpacity="0.9" />
-            <stop offset="50%" stopColor="#062228" stopOpacity="0.95" />
-            <stop offset="100%" stopColor="#031518" stopOpacity="0.98" />
+            <stop offset="0%" stopColor="#263B3C" stopOpacity="0.95" />
+            <stop offset="50%" stopColor="#204345" stopOpacity="0.95" />
+            <stop offset="100%" stopColor="#183638" stopOpacity="0.98" />
           </linearGradient>
 
           {/* Dynamic Wave Glow */}

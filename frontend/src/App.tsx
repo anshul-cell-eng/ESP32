@@ -77,21 +77,21 @@ const MainLayout: React.FC = () => {
       {/* Operational Safety Dashboard Section */}
       <section id="dashboard" className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 py-10 scroll-mt-16">
         {/* Section Header with Quick Tab Selector Pills */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pb-4 border-b border-[#C0D1D4]/10">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pb-4 border-b border-sentinel-border">
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight text-[#F7FAFC]">
+              <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight text-sentinel-text">
                 Operational Safety Dashboard
               </h2>
-              <span className="w-2 h-2 rounded-full bg-[#35D7E8]" />
+              <span className="w-2 h-2 rounded-full bg-sentinel-blue" />
             </div>
-            <p className="text-xs sm:text-sm text-[#C0D1D4] mt-0.5">
+            <p className="text-xs sm:text-sm text-sentinel-textSecondary mt-0.5">
               Continuous multi-tier telemetry, safety state verification &amp; remote controls
             </p>
           </div>
 
           {/* Quick Responsive View Selector Pills */}
-          <div className="flex items-center gap-1.5 overflow-x-auto p-1 rounded-full bg-[#06282E]/90 border border-[#C0D1D4]/10 backdrop-blur-md">
+          <div className="flex items-center gap-1.5 overflow-x-auto p-1 rounded-full bg-sentinel-surface border border-sentinel-border">
             {navTabs.map((tab) => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
@@ -101,8 +101,8 @@ const MainLayout: React.FC = () => {
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-200 cursor-pointer ${
                     isActive
-                      ? 'bg-[#35D7E8] text-[#051E22] font-semibold shadow-cyanGlow'
-                      : 'text-[#C0D1D4] hover:text-white hover:bg-white/5'
+                      ? 'bg-sentinel-blue text-sentinel-panel font-bold shadow-cyanGlow'
+                      : 'text-sentinel-textSecondary hover:text-white hover:bg-sentinel-panel/60'
                   }`}
                 >
                   <Icon className="w-3.5 h-3.5" />
@@ -127,19 +127,19 @@ const MainLayout: React.FC = () => {
       {/* Engineering Architecture & Hardware Specifications Section */}
       <ArchitectureSection />
 
-      {/* Editorial Footer */}
-      <footer className="w-full border-t border-[#C0D1D4]/10 bg-[#04191C] py-8 px-4 sm:px-6 lg:px-12 text-xs text-[#7E9A9E]">
+      {/* Refined Footer */}
+      <footer className="w-full border-t border-sentinel-border bg-sentinel-panel py-8 px-4 sm:px-6 lg:px-12 text-xs text-sentinel-muted">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-xl bg-[#0B2C33] border border-[#35D7E8]/30 flex items-center justify-center text-[#35D7E8]">
+            <div className="w-7 h-7 rounded-xl bg-sentinel-surface border border-sentinel-border flex items-center justify-center text-sentinel-blue">
               <Shield className="w-3.5 h-3.5" />
             </div>
             <div>
               <span className="font-extrabold text-white tracking-wider">SENTINEL</span>
-              <span className="text-[#C0D1D4] ml-2 text-xs">Smart LPG Safety Monitoring Platform</span>
+              <span className="text-sentinel-textSecondary ml-2 text-xs">Smart LPG Safety Monitoring Platform</span>
             </div>
           </div>
-          <div className="flex flex-wrap items-center gap-3 text-[11px] font-mono text-[#C0D1D4]">
+          <div className="flex flex-wrap items-center gap-3 text-[11px] font-mono text-sentinel-textSecondary">
             <span>ESP32 Core</span>
             <span>•</span>
             <span>MQ-2 12-Bit ADC</span>
@@ -148,7 +148,7 @@ const MainLayout: React.FC = () => {
             <span>•</span>
             <button 
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              className="text-[#35D7E8] hover:underline font-bold cursor-pointer ml-1"
+              className="text-sentinel-blue hover:underline font-bold cursor-pointer ml-1"
             >
               Back to Top ↑
             </button>

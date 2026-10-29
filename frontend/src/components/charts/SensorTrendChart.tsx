@@ -66,8 +66,8 @@ export const SensorTrendChart: React.FC<SensorTrendChartProps> = ({
             <span
               className={`px-1.5 py-0.2 rounded text-[10px] font-mono font-medium border ${
                 source === 'LIVE'
-                  ? 'bg-blue-950/30 text-sentinel-blue border-blue-900/40'
-                  : 'bg-amber-950/30 text-sentinel-warning border-amber-900/40'
+                  ? 'bg-sentinel-blue/15 text-sentinel-blue border-sentinel-blue/40'
+                  : 'bg-sentinel-warning/15 text-sentinel-warning border-sentinel-warning/40'
               }`}
             >
               {source === 'LIVE' ? 'SRC: LIVE HARDWARE' : 'SRC: SIMULATOR'}
@@ -108,25 +108,25 @@ export const SensorTrendChart: React.FC<SensorTrendChartProps> = ({
             <AreaChart data={filteredData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <defs>
                 <linearGradient id="adcAreaGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#35D7E8" stopOpacity={0.35} />
-                  <stop offset="100%" stopColor="#35D7E8" stopOpacity={0.0} />
+                  <stop offset="0%" stopColor="#45D9E6" stopOpacity={0.3} />
+                  <stop offset="100%" stopColor="#45D9E6" stopOpacity={0.0} />
                 </linearGradient>
               </defs>
 
-              <CartesianGrid strokeDasharray="2 2" stroke="rgba(192, 209, 212, 0.08)" vertical={false} />
+              <CartesianGrid strokeDasharray="2 2" stroke="rgba(58, 85, 83, 0.35)" vertical={false} />
 
               <XAxis
                 dataKey="formattedTime"
-                stroke="#7E9A9E"
-                fontSize={10}
+                stroke="#899F9B"
+                tick={{ fill: '#B8C5C2', fontSize: 10 }}
                 tickLine={false}
                 axisLine={false}
                 minTickGap={24}
               />
 
               <YAxis
-                stroke="#7E9A9E"
-                fontSize={10}
+                stroke="#899F9B"
+                tick={{ fill: '#B8C5C2', fontSize: 10 }}
                 domain={[0, 4095]}
                 tickLine={false}
                 axisLine={false}
@@ -135,26 +135,26 @@ export const SensorTrendChart: React.FC<SensorTrendChartProps> = ({
 
               <ReferenceLine
                 y={safeThreshold}
-                stroke="#F59E0B"
+                stroke="#F3B64B"
                 strokeDasharray="3 3"
                 strokeWidth={1}
                 label={{
                   value: `WARN (${safeThreshold})`,
                   position: 'right',
-                  fill: '#F59E0B',
+                  fill: '#F3B64B',
                   fontSize: 9,
                   offset: 6,
                 }}
               />
               <ReferenceLine
                 y={criticalThreshold}
-                stroke="#FF746D"
+                stroke="#FF6868"
                 strokeDasharray="3 3"
                 strokeWidth={1.5}
                 label={{
                   value: `CRIT (${criticalThreshold})`,
                   position: 'right',
-                  fill: '#FF746D',
+                  fill: '#FF6868',
                   fontSize: 9,
                   offset: 6,
                 }}
@@ -165,25 +165,25 @@ export const SensorTrendChart: React.FC<SensorTrendChartProps> = ({
                   if (active && payload && payload.length) {
                     const d = payload[0].payload as SensorReading & { formattedTime: string };
                     return (
-                      <div className="bg-[#08252A] border border-[#35D7E8]/30 p-2.5 rounded-xl shadow-card text-xs font-mono">
-                        <div className="text-[#7E9A9E] text-[10px] mb-1">{d.formattedTime}</div>
-                        <div className="text-white font-bold flex items-center gap-1.5">
-                          <span className="text-[#35D7E8] text-sm">{d.gasAdc}</span>
-                          <span className="text-[10px] text-[#7E9A9E] font-normal">ADC counts</span>
+                      <div className="bg-[#204345] border border-[#3A5553] p-2.5 rounded-xl shadow-card text-xs font-mono">
+                        <div className="text-[#899F9B] text-[10px] mb-1">{d.formattedTime}</div>
+                        <div className="text-[#F5F5F0] font-bold flex items-center gap-1.5">
+                          <span className="text-[#45D9E6] text-sm">{d.gasAdc}</span>
+                          <span className="text-[10px] text-[#B8C5C2] font-normal">ADC counts</span>
                         </div>
-                        <div className="flex items-center gap-2 mt-1 pt-1 border-t border-[#C0D1D4]/10 text-[10px]">
+                        <div className="flex items-center gap-2 mt-1 pt-1 border-t border-[#3A5553] text-[10px]">
                           <span
                             className={
                               d.gasStatus === 'CRITICAL'
-                                ? 'text-[#FF746D] font-bold'
+                                ? 'text-[#FF6868] font-bold'
                                 : d.gasStatus === 'WARNING'
-                                ? 'text-[#F59E0B] font-bold'
-                                : 'text-[#22C55E]'
+                                ? 'text-[#F3B64B] font-bold'
+                                : 'text-[#32C98A]'
                             }
                           >
                             Status: {d.gasStatus}
                           </span>
-                          <span className="text-[#7E9A9E]">Relay: {d.relayState ? 'TRIPPED' : 'PASS'}</span>
+                          <span className="text-[#B8C5C2]">Relay: {d.relayState ? 'TRIPPED' : 'PASS'}</span>
                         </div>
                       </div>
                     );
@@ -195,7 +195,7 @@ export const SensorTrendChart: React.FC<SensorTrendChartProps> = ({
               <Area
                 type="monotone"
                 dataKey="gasAdc"
-                stroke="#35D7E8"
+                stroke="#45D9E6"
                 strokeWidth={2}
                 fillOpacity={1}
                 fill="url(#adcAreaGradient)"

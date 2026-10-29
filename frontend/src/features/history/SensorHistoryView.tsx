@@ -154,10 +154,10 @@ export const SensorHistoryView: React.FC = () => {
                       <span
                         className={`px-1.5 py-0.2 rounded text-[10px] font-bold border ${
                           row.gasStatus === 'CRITICAL'
-                            ? 'bg-rose-950/30 text-sentinel-critical border-rose-900/40'
+                            ? 'bg-sentinel-critical/15 text-sentinel-critical border-sentinel-critical/40'
                             : row.gasStatus === 'WARNING'
-                            ? 'bg-amber-950/30 text-sentinel-warning border-amber-900/40'
-                            : 'bg-emerald-950/30 text-sentinel-safe border-emerald-900/40'
+                            ? 'bg-sentinel-warning/15 text-sentinel-warning border-sentinel-warning/40'
+                            : 'bg-sentinel-safe/15 text-sentinel-safe border-sentinel-safe/40'
                         }`}
                       >
                         {row.gasStatus}
@@ -175,10 +175,10 @@ export const SensorHistoryView: React.FC = () => {
                     </td>
                     <td className="py-2.5 px-3.5">
                       <span
-                        className={`px-1.5 py-0.2 rounded text-[10px] ${
+                        className={`px-1.5 py-0.2 rounded text-[10px] border ${
                           row.source === 'LIVE'
-                            ? 'bg-blue-950/30 text-sentinel-blue'
-                            : 'bg-amber-950/30 text-sentinel-warning'
+                            ? 'bg-sentinel-blue/15 text-sentinel-blue border-sentinel-blue/30'
+                            : 'bg-sentinel-warning/15 text-sentinel-warning border-sentinel-warning/30'
                         }`}
                       >
                         {row.source}

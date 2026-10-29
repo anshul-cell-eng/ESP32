@@ -50,50 +50,50 @@ export const OverviewView: React.FC = () => {
       title: 'DEVICE OFFLINE',
       desc: 'Live telemetry unavailable. Preserving last known sensor readings in memory.',
       badge: 'OFFLINE',
-      border: 'border-[#FF746D]/40',
-      bg: 'bg-[#FF746D]/10',
+      border: 'border-sentinel-critical/40',
+      bg: 'bg-sentinel-critical/10',
       icon: WifiOff,
-      iconColor: 'text-[#FF746D]',
+      iconColor: 'text-sentinel-critical',
     };
   } else if (!isLive) {
     statusBanner = {
       title: 'DEMO PRESENTATION ACTIVE',
       desc: 'Simulating sensor inputs and actuator responses without hardware dependencies.',
       badge: 'SIMULATOR',
-      border: 'border-[#F59E0B]/40',
-      bg: 'bg-[#F59E0B]/10',
+      border: 'border-sentinel-warning/40',
+      bg: 'bg-sentinel-warning/10',
       icon: Radio,
-      iconColor: 'text-[#F59E0B]',
+      iconColor: 'text-sentinel-warning',
     };
   } else if (gasStatus === 'CRITICAL') {
     statusBanner = {
       title: 'CRITICAL GAS LEAKAGE DETECTED',
       desc: 'Emergency limit exceeded (>2000 ADC). Auto-isolation solenoid energized.',
       badge: 'CRITICAL ALERT',
-      border: 'border-[#FF746D]/50',
-      bg: 'bg-[#FF746D]/20',
+      border: 'border-sentinel-critical/50',
+      bg: 'bg-sentinel-critical/20',
       icon: ShieldAlert,
-      iconColor: 'text-[#FF746D]',
+      iconColor: 'text-sentinel-critical',
     };
   } else if (gasStatus === 'WARNING') {
     statusBanner = {
       title: 'ELEVATED GAS READING DETECTED',
       desc: 'Sensor resistance drop detected (>1500 ADC). Caution advised.',
       badge: 'ELEVATED WARNING',
-      border: 'border-[#F59E0B]/40',
-      bg: 'bg-[#F59E0B]/10',
+      border: 'border-sentinel-warning/40',
+      bg: 'bg-sentinel-warning/10',
       icon: AlertTriangle,
-      iconColor: 'text-[#F59E0B]',
+      iconColor: 'text-sentinel-warning',
     };
   } else {
     statusBanner = {
       title: 'SYSTEM NORMAL',
       desc: 'Ambient combustible gas concentration within calibrated safe baseline.',
       badge: 'NORMAL',
-      border: 'border-[#22C55E]/30',
-      bg: 'bg-[#22C55E]/10',
+      border: 'border-sentinel-safe/30',
+      bg: 'bg-sentinel-safe/10',
       icon: ShieldCheck,
-      iconColor: 'text-[#22C55E]',
+      iconColor: 'text-sentinel-safe',
     };
   }
 
@@ -212,7 +212,7 @@ export const OverviewView: React.FC = () => {
               ? 'text-sentinel-critical'
               : gasStatus === 'WARNING'
               ? 'text-sentinel-warning'
-              : 'text-sentinel-safe'
+              : 'text-white'
           }
         />
         <MetricCard
@@ -223,8 +223,8 @@ export const OverviewView: React.FC = () => {
           badge={relayState ? 'TRIPPED' : 'PASS'}
           badgeColor={
             relayState
-              ? 'bg-[#FF746D]/20 text-[#FF746D] border-[#FF746D]/30'
-              : 'bg-[#22C55E]/20 text-[#22C55E] border-[#22C55E]/30'
+              ? 'bg-sentinel-critical/20 text-sentinel-critical border-sentinel-critical/40'
+              : 'bg-sentinel-safe/20 text-sentinel-safe border-sentinel-safe/40'
           }
         />
         <MetricCard

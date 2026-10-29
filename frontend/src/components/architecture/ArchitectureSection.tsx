@@ -42,7 +42,7 @@ export const ArchitectureSection: React.FC = () => {
       pin: 'GPIO 13 (Digital OUT)',
       desc: 'Energizes solenoid valve driver circuit instantly upon threshold breach, cutting gas supply without requiring web connectivity.',
       icon: Power,
-      color: 'text-[#FF746D]',
+      color: 'text-sentinel-blue',
       badge: 'Fail-Safe Isolation'
     },
     {
@@ -52,7 +52,7 @@ export const ArchitectureSection: React.FC = () => {
       pin: '802.11 b/g/n Wi-Fi',
       desc: 'Pushes synchronized sensor metrics and actuator state packets via Server-Sent Events to the live web dashboard in under 40ms.',
       icon: Radio,
-      color: 'text-[#22C55E]',
+      color: 'text-sentinel-safe',
       badge: 'Real-time Telemetry'
     }
   ];
@@ -68,61 +68,61 @@ export const ArchitectureSection: React.FC = () => {
   ];
 
   return (
-    <section id="architecture" className="w-full py-16 px-4 sm:px-6 lg:px-12 border-t border-[#C0D1D4]/10 bg-[#052226]/50">
+    <section id="architecture" className="w-full py-16 px-4 sm:px-6 lg:px-12 border-t border-sentinel-border bg-sentinel-panel/30">
       <div className="max-w-7xl mx-auto space-y-12">
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0B2C33] border border-[#35D7E8]/20 text-[11px] font-mono uppercase tracking-widest text-[#35D7E8]">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sentinel-surface border border-sentinel-border text-[11px] font-mono uppercase tracking-widest text-sentinel-blue">
               <Workflow className="w-3.5 h-3.5" />
               <span>Engineering Architecture</span>
             </div>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-[#F7FAFC] tracking-tight">
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-sentinel-text tracking-tight">
               Hardware-First Safety Pipeline
             </h2>
-            <p className="text-sm sm:text-base text-[#C0D1D4] max-w-2xl">
+            <p className="text-sm sm:text-base text-sentinel-textSecondary max-w-2xl">
               Unlike cloud-dependent IoT systems that fail during network outages, SENTINEL executes complete gas isolation locally at the hardware level in under 100 milliseconds.
             </p>
           </div>
 
-          <div className="flex items-center gap-2 text-xs font-mono text-[#7E9A9E] bg-[#06282E]/80 px-4 py-2 rounded-xl border border-[#C0D1D4]/10">
-            <ShieldCheck className="w-4 h-4 text-[#22C55E]" />
+          <div className="flex items-center gap-2 text-xs font-mono text-sentinel-muted bg-sentinel-surface px-4 py-2 rounded-xl border border-sentinel-border">
+            <ShieldCheck className="w-4 h-4 text-sentinel-safe" />
             <span>Autonomous Edge Verification Loop</span>
           </div>
         </div>
 
         {/* 4-Step Hardware Pipeline Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {hardwarePipeline.map((step, idx) => {
+          {hardwarePipeline.map((step) => {
             const Icon = step.icon;
             return (
               <div 
                 key={step.step}
-                className="p-5 rounded-2xl bg-[#0B2C33]/70 border border-[#C0D1D4]/10 hover:border-[#35D7E8]/30 backdrop-blur-md flex flex-col justify-between transition-all duration-200 group"
+                className="p-5 rounded-2xl bg-sentinel-panel border border-sentinel-border hover:border-sentinel-blue/40 shadow-card flex flex-col justify-between transition-all duration-200 group"
               >
                 <div>
                   <div className="flex items-center justify-between mb-4">
-                    <span className="text-2xl font-black font-mono text-[#35D7E8]/40 group-hover:text-[#35D7E8] transition-colors">
+                    <span className="text-2xl font-black font-mono text-sentinel-blue/40 group-hover:text-sentinel-blue transition-colors">
                       {step.step}
                     </span>
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono bg-[#06282E] border border-[#C0D1D4]/10 text-[#C0D1D4]">
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono bg-sentinel-surface border border-sentinel-border text-sentinel-textSecondary">
                       {step.badge}
                     </span>
                   </div>
 
-                  <div className="w-10 h-10 rounded-xl bg-[#06282E] border border-[#C0D1D4]/10 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+                  <div className="w-10 h-10 rounded-xl bg-sentinel-surface border border-sentinel-border flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
                     <Icon className={`w-5 h-5 ${step.color}`} />
                   </div>
 
                   <h3 className="text-base font-bold text-white mb-0.5">{step.title}</h3>
-                  <div className="text-xs font-mono text-[#35D7E8] mb-2">{step.device}</div>
-                  <p className="text-xs text-[#C0D1D4] leading-relaxed mb-4">
+                  <div className="text-xs font-mono text-sentinel-blue mb-2">{step.device}</div>
+                  <p className="text-xs text-sentinel-textSecondary leading-relaxed mb-4">
                     {step.desc}
                   </p>
                 </div>
 
-                <div className="pt-3 border-t border-[#C0D1D4]/10 text-[11px] font-mono text-[#7E9A9E]">
-                  Interface: <span className="text-[#F7FAFC]">{step.pin}</span>
+                <div className="pt-3 border-t border-sentinel-border text-[11px] font-mono text-sentinel-muted">
+                  Interface: <span className="text-sentinel-text">{step.pin}</span>
                 </div>
               </div>
             );
@@ -130,33 +130,33 @@ export const ArchitectureSection: React.FC = () => {
         </div>
 
         {/* Technical Pinout & Hardware Specification Table */}
-        <div className="p-6 rounded-2xl bg-[#0B2C33]/60 border border-[#C0D1D4]/10 backdrop-blur-md">
-          <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#C0D1D4]/10">
+        <div className="p-6 rounded-2xl bg-sentinel-panel border border-sentinel-border shadow-card">
+          <div className="flex items-center justify-between mb-4 pb-3 border-b border-sentinel-border">
             <div className="flex items-center gap-2.5">
-              <HardDrive className="w-4 h-4 text-[#35D7E8]" />
+              <HardDrive className="w-4 h-4 text-sentinel-blue" />
               <h3 className="text-sm font-bold text-white tracking-wide uppercase">
                 Hardware Pinout &amp; Microcontroller Wiring Map
               </h3>
             </div>
-            <span className="text-xs font-mono text-[#7E9A9E]">ESP32 WROOM-32 / NodeMCU-32S</span>
+            <span className="text-xs font-mono text-sentinel-muted">ESP32 WROOM-32 / NodeMCU-32S</span>
           </div>
 
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs font-mono">
               <thead>
-                <tr className="border-b border-[#C0D1D4]/10 text-[#7E9A9E]">
+                <tr className="border-b border-sentinel-border text-sentinel-muted">
                   <th className="pb-2.5 font-semibold">Subsystem / Component</th>
                   <th className="pb-2.5 font-semibold">ESP32 Pin</th>
                   <th className="pb-2.5 font-semibold">Signal Direction</th>
                   <th className="pb-2.5 font-semibold">Operational Function</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#C0D1D4]/5 text-[#C0D1D4]">
+              <tbody className="divide-y divide-sentinel-border/50 text-sentinel-textSecondary">
                 {pinoutSpecs.map((spec, i) => (
                   <tr key={i} className="hover:bg-white/[0.02] transition-colors">
                     <td className="py-2.5 font-medium text-white">{spec.component}</td>
-                    <td className="py-2.5 text-[#35D7E8] font-bold">{spec.pin}</td>
-                    <td className="py-2.5 text-[#7E9A9E]">{spec.type}</td>
+                    <td className="py-2.5 text-sentinel-blue font-bold">{spec.pin}</td>
+                    <td className="py-2.5 text-sentinel-muted">{spec.type}</td>
                     <td className="py-2.5">{spec.function}</td>
                   </tr>
                 ))}

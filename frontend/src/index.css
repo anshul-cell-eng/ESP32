@@ -9,7 +9,7 @@
 
   body {
     background-color: #2E2A27;
-    color: #F7FAFC;
+    color: #F5F5F0;
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -17,18 +17,17 @@
   }
 }
 
-/* Atmospheric Editorial Gradients */
+/* Atmospheric Gradients anchored cleanly to warm charcoal #2E2A27 */
 .editorial-bg {
   background: 
-    radial-gradient(circle at 80% 20%, rgba(53, 215, 232, 0.08) 0%, transparent 40%),
-    radial-gradient(circle at 20% 70%, rgba(255, 116, 109, 0.05) 0%, transparent 45%),
-    radial-gradient(ellipse at 75% 30%, #3B3632 0%, #2E2A27 45%, #24201E 100%);
+    radial-gradient(circle at 85% 15%, rgba(69, 217, 230, 0.04) 0%, transparent 40%),
+    radial-gradient(ellipse at 70% 30%, #34302D 0%, #2E2A27 50%, #24211F 100%);
   background-attachment: fixed;
 }
 
-/* Film Texture / Grain Overlay */
+/* Texture Overlay */
 .editorial-noise {
-  background-image: radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-image: radial-gradient(rgba(245, 245, 240, 0.02) 1px, transparent 1px);
   background-size: 24px 24px;
 }
 
@@ -43,40 +42,34 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #0D3E45;
+  background: #3A5553;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #185B64;
+  background: #45D9E6;
 }
 
-/* Glassmorphism Card Primitives */
+/* Refined Industrial Card Primitives */
 .sentinel-card {
-  background: rgba(11, 44, 51, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(192, 209, 212, 0.12);
-  border-radius: 16px;
+  background: #183638;
+  border: 1px solid #3A5553;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px -2px rgba(18, 28, 28, 0.45);
 }
 
 .sentinel-card:hover {
-  border-color: rgba(53, 215, 232, 0.25);
+  border-color: rgba(69, 217, 230, 0.35);
 }
 
 .sentinel-card-elevated {
-  background: rgba(12, 52, 59, 0.95);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(192, 209, 212, 0.16);
-  border-radius: 16px;
+  background: #204345;
+  border: 1px solid #3A5553;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px -4px rgba(18, 28, 28, 0.55);
 }
 
-/* Subtle Card Glow */
-.coral-pill-glow {
-  box-shadow: 0 0 25px -4px rgba(255, 116, 109, 0.4);
-}
-
+/* Restrained Pill Focus */
 .cyan-pill-glow {
-  box-shadow: 0 0 25px -4px rgba(53, 215, 232, 0.35);
+  box-shadow: 0 0 16px -2px rgba(69, 217, 230, 0.25);
 }
