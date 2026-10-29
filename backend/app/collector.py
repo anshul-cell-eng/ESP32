@@ -1,3 +1,4 @@
+import os
 import asyncio
 import httpx
 import logging
@@ -32,6 +33,8 @@ class DeviceCollector:
         self.last_latency_ms: Optional[float] = None
         self.last_valid_payload: Optional[DeviceStatusPayload] = None
         self._last_ingest_time: float = 0.0
+        self._poll_backoff: float = 1.0
+        self._last_poll_attempt: float = 0.0
         
         # Transition detection registers
         self._prev_status: Optional[GasStatus] = None
@@ -115,6 +118,7 @@ class DeviceCollector:
         now_utc = payload.timestamp or datetime.now(timezone.utc).isoformat()
         self.consecutive_failures = 0
         self.is_online = True
+        self._poll_backoff = 1.0
         self.last_successful_response_time = now
         self.last_response_timestamp_str = now_utc
         self.last_latency_ms = 18.5  # Typical HTTPS push acknowledgment latency
@@ -168,7 +172,14 @@ class DeviceCollector:
 
                         # Only perform active HTTP polling if recent push has not arrived
                         if not self.last_successful_response_time or (now - self.last_successful_response_time > 3.0):
-                            await self._poll_esp32_device(client)
+                            if (now - self._last_poll_attempt) >= self._poll_backoff:
+                                self._last_poll_attempt = now
+                                success = await self._poll_esp32_device(client)
+                                if success:
+                                    self._poll_backoff = 1.0
+                                else:
+                                    # Bounded exponential backoff: 2s -> 3s -> max 10s
+                                    self._poll_backoff = min(10.0, max(2.0, self._poll_backoff * 1.5))
                     else:
                         await self._run_demo_tick()
                 except Exception as e:
@@ -178,11 +189,11 @@ class DeviceCollector:
                 sleep_time = max(0.1, self.polling_interval - elapsed)
                 await asyncio.sleep(sleep_time)
 
-    async def _poll_esp32_device(self, client: httpx.AsyncClient):
+    async def _poll_esp32_device(self, client: httpx.AsyncClient) -> bool:
         ip = self.esp32_ip.strip()
         # Skip polling non-routable placeholder or default IP in cloud environment without errors
         if not ip or ip in ["192.168.1.100", "0.0.0.0", "127.0.0.1"] and os.getenv("RENDER"):
-            return
+            return False
 
         if not ip.startswith("http://") and not ip.startswith("https://"):
             url = f"http://{ip}/api/status"
@@ -191,7 +202,7 @@ class DeviceCollector:
 
         req_start = time.time()
         try:
-            resp = await client.get(url)
+            resp = await client.get(url, timeout=3.0)
             latency = round((time.time() - req_start) * 1000.0, 2)
             
             if resp.status_code == 200:
@@ -228,14 +239,19 @@ class DeviceCollector:
                 if self.mode == OperatingMode.LIVE:
                     status_update = self.get_system_status()
                     await sse_manager.broadcast("telemetry", status_update.model_dump())
+                return True
             else:
                 self._handle_failure(f"HTTP {resp.status_code}")
+                return False
         except httpx.TimeoutException:
-            self._handle_failure("Connection timed out")
+            self._handle_failure("Connection timed out (3s)")
+            return False
         except httpx.ConnectError:
             self._handle_failure("Connection refused / unreachable host")
+            return False
         except Exception as e:
             self._handle_failure(str(e))
+            return False
 
     def _handle_failure(self, reason: str):
         self.consecutive_failures += 1

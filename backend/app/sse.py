@@ -22,6 +22,14 @@ class SSEManager:
             init_payload = json.dumps({"status": "connected", "channel": "sentinel-telemetry"})
             yield f"event: connect\ndata: {init_payload}\n\n"
             
+            # Immediately send initial system status snapshot to eliminate frontend loading lag
+            try:
+                from app.collector import device_collector
+                initial_status = device_collector.get_system_status()
+                yield f"event: telemetry\ndata: {json.dumps(initial_status.model_dump())}\n\n"
+            except Exception as e:
+                logger.warning(f"Could not send initial telemetry snapshot: {e}")
+            
             while True:
                 # Wait for data or timeout for keepalive
                 try:

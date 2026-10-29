@@ -46,9 +46,12 @@ export const OverviewView: React.FC = () => {
   };
 
   if (isLive && !isOnline) {
+    const lastTimeStr = status.lastResponseTimestamp
+      ? `Last verified reading at ${new Date(status.lastResponseTimestamp).toLocaleTimeString()} (${Math.max(1, Math.round((Date.now() - new Date(status.lastResponseTimestamp).getTime()) / 1000))}s ago)`
+      : 'No verified device telemetry received yet';
     statusBanner = {
-      title: 'DEVICE OFFLINE',
-      desc: 'Live telemetry unavailable. Preserving last known sensor readings in memory.',
+      title: 'HARDWARE OFFLINE (HC001)',
+      desc: `Live ESP32 telemetry unavailable. ${lastTimeStr}. Preserving last valid sensor state.`,
       badge: 'OFFLINE',
       border: 'border-sentinel-critical/40',
       bg: 'bg-sentinel-critical/10',

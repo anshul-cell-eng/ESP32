@@ -1,0 +1,31 @@
+#pragma once
+
+// ==================================================================================
+// SENTINEL — ESP32 Firmware Configuration Template
+// Copy this file to "config.h" and set your real network credentials.
+// "config.h" is gitignored and will never be committed to public repositories.
+// ==================================================================================
+
+// 1. Wi-Fi Station Credentials
+// Set these to your local Wi-Fi router or laptop Mobile Hotspot SSID & password
+#define SENTINEL_WIFI_SSID     "YOUR_WIFI_SSID"
+#define SENTINEL_WIFI_PASSWORD "YOUR_WIFI_PASSWORD"
+
+// 2. Ingestion Endpoint URL
+// - For Render cloud deployment: "https://your-service.onrender.com/api/ingest"
+// - For local LAN testing (direct to laptop): "http://192.168.137.1:8000/api/ingest"
+#define SENTINEL_INGEST_URL    "https://sentinel-backend.onrender.com/api/ingest"
+
+// 3. Device Identity and Secret Authentication Token
+// Must match SENTINEL_DEVICE_TOKEN in backend environment variables (.env)
+#define SENTINEL_DEVICE_ID     "HC001"
+#define SENTINEL_DEVICE_TOKEN  "sentinel_dev_secret_token_2026"
+
+// 4. Ingestion Cadence (milliseconds)
+#define SENTINEL_PUSH_INTERVAL_MS 1000
+
+// 5. Hardware Switch Configuration
+// GPIO 35 has no internal pull-up/down resistors.
+// - Standard Pull-Up (10k resistor between GPIO 35 and 3.3V, button to GND): LOW when pressed
+// - Pull-Down (10k resistor between GPIO 35 and GND, button to 3.3V): HIGH when pressed
+#define SILENCE_SWITCH_ACTIVE_LEVEL LOW

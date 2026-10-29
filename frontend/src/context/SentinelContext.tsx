@@ -200,14 +200,15 @@ export const SentinelProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       setEvents((prev) => [newEvt, ...prev].slice(0, 100));
     });
 
-    // Polling fallback if SSE drops
+    // Resilient freshness poll: polls every 2.5s if SSE drops, or every 4s while streaming to ensure zero state drift
     const pollInterval = setInterval(() => {
-      if (!isStreaming) {
-        fetchStatus()
-          .then((st) => setStatus(st))
-          .catch(() => {});
-      }
-    }, 2500);
+      fetchStatus()
+        .then((st) => {
+          setStatus(st);
+          setModeState(st.mode);
+        })
+        .catch(() => {});
+    }, isStreaming ? 4000 : 2500);
 
     return () => {
       unsubConn();
