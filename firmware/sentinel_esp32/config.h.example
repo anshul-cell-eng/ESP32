@@ -12,9 +12,9 @@
 #define SENTINEL_WIFI_PASSWORD "YOUR_WIFI_PASSWORD"
 
 // 2. Ingestion Endpoint URL
-// - For Render cloud deployment: "https://your-service.onrender.com/api/ingest"
+// - For Render cloud deployment: "https://sentinel-backend-kf6w.onrender.com/api/ingest"
 // - For local LAN testing (direct to laptop): "http://192.168.137.1:8000/api/ingest"
-#define SENTINEL_INGEST_URL    "https://sentinel-backend.onrender.com/api/ingest"
+#define SENTINEL_INGEST_URL    "https://sentinel-backend-kf6w.onrender.com/api/ingest"
 
 // 3. Device Identity and Secret Authentication Token
 // Must match SENTINEL_DEVICE_TOKEN in backend environment variables (.env)

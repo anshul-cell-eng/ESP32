@@ -18,7 +18,7 @@ services:
           name: sentinel-db
           property: connectionString
       - key: SENTINEL_DEVICE_TOKEN
-        generateValue: true
+        value: sentinel_dev_secret_token_2026
       - key: MODE
         value: LIVE
       - key: FRONTEND_URL

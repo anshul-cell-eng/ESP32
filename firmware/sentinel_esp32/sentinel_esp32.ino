@@ -54,7 +54,7 @@
 // Backend Ingestion URL
 // Priority: Cloud Render endpoint, with easy toggle for local LAN backend
 #ifndef SENTINEL_INGEST_URL
-  #define SENTINEL_INGEST_URL "https://sentinel-backend.onrender.com/api/ingest"
+  #define SENTINEL_INGEST_URL "https://sentinel-backend-kf6w.onrender.com/api/ingest"
 #endif
 
 #ifndef SENTINEL_DEVICE_ID
