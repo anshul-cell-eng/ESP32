@@ -1,0 +1,82 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: #051E22;
+    color: #F7FAFC;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+}
+
+/* Atmospheric Editorial Gradients */
+.editorial-bg {
+  background: 
+    radial-gradient(circle at 80% 20%, rgba(53, 215, 232, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 20% 70%, rgba(255, 116, 109, 0.05) 0%, transparent 45%),
+    radial-gradient(ellipse at 75% 30%, #083F45 0%, #062E32 35%, #052521 65%, #091326 100%);
+  background-attachment: fixed;
+}
+
+/* Film Texture / Grain Overlay */
+.editorial-noise {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Professional clean scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #051E22;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #0D3E45;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #185B64;
+}
+
+/* Glassmorphism Card Primitives */
+.sentinel-card {
+  background: rgba(11, 44, 51, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(192, 209, 212, 0.12);
+  border-radius: 16px;
+}
+
+.sentinel-card:hover {
+  border-color: rgba(53, 215, 232, 0.25);
+}
+
+.sentinel-card-elevated {
+  background: rgba(12, 52, 59, 0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(192, 209, 212, 0.16);
+  border-radius: 16px;
+}
+
+/* Subtle Card Glow */
+.coral-pill-glow {
+  box-shadow: 0 0 25px -4px rgba(255, 116, 109, 0.4);
+}
+
+.cyan-pill-glow {
+  box-shadow: 0 0 25px -4px rgba(53, 215, 232, 0.35);
+}
