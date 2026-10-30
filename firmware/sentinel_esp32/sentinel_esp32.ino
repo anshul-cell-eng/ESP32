@@ -203,10 +203,11 @@ void setup() {
 
   // 6. Launch Dedicated Network Task on Core 0
   // Isolates Wi-Fi, HTTP server, and cloud ingestion from the safety-critical Core 1 loop
+  // Stack allocated at 16384 bytes (16KB) for robust WiFiClientSecure TLS handshakes
   xTaskCreatePinnedToCore(
     networkTask,        // Function pointer
     "SENTINEL_NetTask", // Task name
-    8192,               // Stack size (bytes)
+    16384,              // Stack size (bytes)
     NULL,               // Parameters
     1,                  // Priority
     NULL,               // Task handle
